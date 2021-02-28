@@ -4,26 +4,27 @@ import org.geektimes.web.mvc.controller.PageController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 /**
- * 输出 “Hello,World” Controller
+ * @ClassName: UserController
+ * @Description: 用户 Controller, 当下仅提供注册方法实现
+ * @author: zhoujian
+ * @date: 2021/2/28 22:13
+ * @version: 1.0
  */
-@Path("/hello")
-public class HelloWorldController implements PageController {
+@Path("/user")
+public class UserController implements PageController {
 
-    @GET
-    @POST
-    @Path("/world") // /hello/world -> HelloWorldController
+    @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        return "index.jsp";
+        return null;
     }
 
-    @GET
-    @Path("/2021")
-    public String executeSec(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+    @POST
+    @Path("/register")
+    public String register(HttpServletRequest request, HttpServletResponse response) throws Throwable {
         return "index.jsp";
     }
 }

@@ -27,6 +27,14 @@ import java.util.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
+/**
+ * Controller方法映射初始化
+ * 以及请求转发控制（含HttpMethods方法支持控制）
+ * @author zhoujian
+ * @date 21:30 2021/2/28
+ * @param
+ * @return
+ **/
 public class FrontControllerServlet extends HttpServlet {
 
     /**
@@ -56,19 +64,26 @@ public class FrontControllerServlet extends HttpServlet {
         for (Controller controller : ServiceLoader.load(Controller.class)) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
-            String requestPath = pathFromClass.value();
+            if (null == pathFromClass){
+                continue;
+            }
+            String moduleRequestPath = pathFromClass.value();
             Method[] publicMethods = controllerClass.getMethods();
             // 处理方法支持的 HTTP 方法集合
             for (Method method : publicMethods) {
                 Set<String> supportedHttpMethods = findSupportedHttpMethods(method);
                 Path pathFromMethod = method.getAnnotation(Path.class);
+                /**
+                 * 定义，仅 添加了Path注解的方法才算是合法的需要映射的方法，才允许进行请求时映射
+                 * 此处并没有进行映射路径一致的检查与控制，TODO
+                 **/
                 if (pathFromMethod != null) {
-                    requestPath += pathFromMethod.value();
+                    String requestPath = moduleRequestPath + pathFromMethod.value();
+                    handleMethodInfoMapping.put(requestPath,
+                            new HandlerMethodInfo(requestPath, method, supportedHttpMethods));
+                    controllersMapping.put(requestPath, controller);
                 }
-                handleMethodInfoMapping.put(requestPath,
-                        new HandlerMethodInfo(requestPath, method, supportedHttpMethods));
             }
-            controllersMapping.put(requestPath, controller);
         }
     }
 
