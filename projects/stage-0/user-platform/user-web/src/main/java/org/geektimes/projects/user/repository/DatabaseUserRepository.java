@@ -43,7 +43,28 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
-        return false;
+        StringBuffer buffer = new StringBuffer("INSERT INTO users(name,password,email,phoneNumber) VALUES");
+        buffer.append("('").append(user.getName()).append("','")
+                .append(user.getPassword()).append("','")
+                .append(user.getEmail()).append("','")
+                .append(user.getPhoneNumber()).append("')");
+        Statement statement = null;
+        ResultSet resultSet = null;
+        Connection connection = getConnection();
+        boolean flag = false;
+        try {
+            statement = connection.createStatement();
+            flag = statement.execute(buffer.toString());
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }finally {
+            try {
+                connection.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return !flag;
     }
 
     @Override

@@ -1,9 +1,14 @@
 package org.geektimes.projects.user.web.controller;
 
+import org.apache.commons.lang.StringUtils;
+import org.geektimes.projects.user.domain.User;
+import org.geektimes.projects.user.service.UserService;
+import org.geektimes.projects.user.service.impl.UserServiceImpl;
 import org.geektimes.web.mvc.controller.PageController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
@@ -17,14 +22,41 @@ import javax.ws.rs.Path;
 @Path("/user")
 public class UserController implements PageController {
 
+    private UserService userService;
+
+    public UserController (){
+        UserService userService = new UserServiceImpl();
+        this.userService = userService;
+    }
+
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        return null;
+        return register(request, response);
     }
 
     @POST
     @Path("/register")
     public String register(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        return "index.jsp";
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(password)){
+            User registerUser = new User();
+            registerUser.setEmail(email);
+            registerUser.setEmail(email);
+            registerUser.setPassword(password);
+            registerUser.setPhoneNumber("15621859466");
+            if (userService.register(registerUser)){
+                // 注册成功
+                return "success.jsp";
+            }
+        }
+        return "login-form.jsp";
+    }
+
+    @GET
+    @Path("/sign")
+    public String sign(HttpServletRequest request, HttpServletResponse response) throws Throwable{
+        return "login-form.jsp";
     }
 }

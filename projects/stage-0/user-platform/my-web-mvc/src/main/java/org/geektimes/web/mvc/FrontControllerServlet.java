@@ -150,7 +150,10 @@ public class FrontControllerServlet extends HttpServlet {
 
                     if (controller instanceof PageController) {
                         PageController pageController = PageController.class.cast(controller);
-                        String viewPath = pageController.execute(request, response);
+                        // 这样就限制了映射方法的参数列表，不过暂时支持多方法了
+                        Object result = handlerMethodInfo.getHandlerMethod().invoke(pageController, request, response);
+//                        String viewPath = pageController.execute(request, response);
+                        String viewPath = (String) result;
                         // 页面请求 forward
                         // request -> RequestDispatcher forward
                         // RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewPath);
