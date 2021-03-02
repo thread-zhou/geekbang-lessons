@@ -170,19 +170,4 @@ public class ClassUtil {
         return loadClass(className);
     }
 
-    /**
-     * 获取 BeanContainer 实例
-     **/
-    public static BeanContainer getInstance() {
-        return ContainerHolder.HOLDER.instance;
-    }
-
-    private enum ContainerHolder {
-        HOLDER;
-        private BeanContainer instance;
-
-        ContainerHolder() {
-            instance = new BeanContainer();
-        }
-    }
 }

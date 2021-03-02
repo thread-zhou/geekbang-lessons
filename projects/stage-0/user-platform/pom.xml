@@ -38,6 +38,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <lombok.version>1.16.20</lombok.version>
+        <junit.version>4.12</junit.version>
     </properties>
 
     <!-- Artifacts 依赖版本管理 -->
@@ -91,6 +92,13 @@
                 <scope>provided</scope>
             </dependency>
 
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
