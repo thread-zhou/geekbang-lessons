@@ -27,4 +27,14 @@ public class AopTest {
         controller.hello();
         controller.helloForAspect();
     }
+
+    @Test
+    public void doAdviceChainAop(){
+        BeanContainer beanContainer = BeanContainer.getInstance();
+        beanContainer.loadBeans("com.geektimes.web");
+        new Aop().doAop();
+        new Ioc().doIoc();
+        FuYiController controller = (FuYiController) beanContainer.getBean(FuYiController.class);
+        controller.hello();
+    }
 }
