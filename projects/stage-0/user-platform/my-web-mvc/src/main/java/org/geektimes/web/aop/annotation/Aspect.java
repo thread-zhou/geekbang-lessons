@@ -18,5 +18,5 @@ public @interface Aspect {
      * @param
      * @return java.lang.Class<? extends Annotation>
      **/
-    Class<? extends Annotation> target();
+    String pointcut() default "";
 }

@@ -25,5 +25,6 @@ public class AopTest {
         new Ioc().doIoc();
         FuYiController controller = (FuYiController) beanContainer.getBean(FuYiController.class);
         controller.hello();
+        controller.helloForAspect();
     }
 }

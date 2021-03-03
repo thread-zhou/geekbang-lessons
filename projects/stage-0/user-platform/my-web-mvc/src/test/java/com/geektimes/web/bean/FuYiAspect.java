@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @version: 1.0
  */
 @Slf4j
-@Aspect(target = Controller.class)
+@Aspect(pointcut = "execution(* com.geektimes.web.bean.FuYiController.helloForAspect(..))")
 public class FuYiAspect implements AroundAdvice {
 
     @Override

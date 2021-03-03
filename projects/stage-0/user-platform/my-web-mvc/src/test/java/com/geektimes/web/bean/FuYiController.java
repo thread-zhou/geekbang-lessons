@@ -21,4 +21,8 @@ public class FuYiController {
     public void hello() {
         log.info(fuyiService.helloWorld());
     }
+
+    public void helloForAspect() {
+        log.info("Hello Aspectj");
+    }
 }
