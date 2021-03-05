@@ -46,13 +46,6 @@ import java.util.List;
 public class DispatcherServlet extends HttpServlet {
 
     /**
-     * 用户控制器映射初始化
-     **/
-    private ControllerHandler controllerHandler = new ControllerHandler();
-
-    private ResultRender resultRender = new ResultRender();
-
-    /**
      * 请求执行链
      */
     private final List<Handler> HANDLER = new ArrayList<>();
