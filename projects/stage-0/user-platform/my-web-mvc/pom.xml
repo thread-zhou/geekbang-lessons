@@ -64,5 +64,28 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <!-- tomcat-embed-jasper这个依赖是引入了一个内置的tomcat，
+            spring-boot默认就是引用这个嵌入式的tomcat包实现直接启动服务的。
+            这个包除了加入了一个嵌入式的tomcat，还引入了java.servlet-api和jsp-api这两个包，
+            如果不想用这种嵌入式的tomcat的话，可以去除tomcat-embed-jasper然后引入这两个包-->
+        <!-- tomcat embed -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
+
+        <!-- JSTL -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- FastJson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
     </dependencies>
 </project>
