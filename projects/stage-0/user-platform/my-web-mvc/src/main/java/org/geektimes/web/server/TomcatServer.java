@@ -56,14 +56,15 @@ public class TomcatServer implements Server{
             ctx.setResources(resources);
             // 添加jspServlet，defaultServlet和自己实现的dispatcherServlet
 
+            // 去除了JspHandler和SimpleUrlHandler这两个servlet的注册
             // LoadOnStartup，当这个值大于等于0时就会随tomcat启动也实例化
-            tomcat.addServlet("", "jspServlet", new JspServlet()).setLoadOnStartup(3);
+//             tomcat.addServlet("", "jspServlet", new JspServlet()).setLoadOnStartup(3);
             // 用于处理静态资源如css、js文件等
-            tomcat.addServlet("", "defaultServlet", new DefaultServlet()).setLoadOnStartup(1);
+//            tomcat.addServlet("", "defaultServlet", new DefaultServlet()).setLoadOnStartup(1);
+//            ctx.addServletMappingDecoded("/templates/" + "*", "jspServlet");
+//            ctx.addServletMappingDecoded("/static/" + "*", "defaultServlet");
             tomcat.addServlet("", "dispatcherServlet", new DispatcherServlet()).setLoadOnStartup(0);
-            ctx.addServletMappingDecoded("/templates/" + "*", "jspServlet");
-            ctx.addServletMappingDecoded("/static/" + "*", "defaultServlet");
-            ctx.addServletMappingDecoded("/*", "dispatcherServlet");
+
             ctx.addServletMappingDecoded("/*", "dispatcherServlet");
         } catch (Exception e) {
             log.error("初始化Tomcat失败", e);
