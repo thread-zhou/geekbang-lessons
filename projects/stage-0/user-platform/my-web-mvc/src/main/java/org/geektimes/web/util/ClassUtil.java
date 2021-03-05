@@ -138,6 +138,7 @@ public class ClassUtil {
                 return jarURLConnection.getJarFile()
                         .stream()
                         .filter(jarEntry -> jarEntry.getName().endsWith(".class"))
+                        .filter(jarEntry -> getJarEntryFileClassPath(jarEntry).startsWith(basePackage))
                         .map(ClassUtil::getClassByJar)
                         .collect(Collectors.toSet());
             }
@@ -164,10 +165,17 @@ public class ClassUtil {
      * 从jar包获取Class
      */
     private static Class<?> getClassByJar(JarEntry jarEntry) {
-        String jarEntryName = jarEntry.getName();
+        String jarEntryClassPath = getJarEntryFileClassPath(jarEntry);
         // 获取类名
-        String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
+        String className = jarEntryClassPath.substring(0, jarEntryClassPath.lastIndexOf("."));
         return loadClass(className);
+    }
+
+    /**
+     * org/geektimes/App.class -> org.geektimes.App.class
+     **/
+    private static String getJarEntryFileClassPath(JarEntry jarEntry){
+        return jarEntry.getName().replaceAll("/", ".");
     }
 
 }
