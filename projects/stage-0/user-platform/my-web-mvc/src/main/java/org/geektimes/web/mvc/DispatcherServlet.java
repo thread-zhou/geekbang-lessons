@@ -42,6 +42,9 @@ import java.io.IOException;
 @Slf4j
 public class DispatcherServlet extends HttpServlet {
 
+    /**
+     * 用户控制器映射初始化
+     **/
     private ControllerHandler controllerHandler = new ControllerHandler();
 
     private ResultRender resultRender = new ResultRender();
