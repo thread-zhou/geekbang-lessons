@@ -2,6 +2,7 @@ package org.geektimes.web.mvc;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.geektimes.web.FuYi;
 import org.geektimes.web.core.BeanContainer;
 import org.geektimes.web.mvc.annotation.ResponseBody;
 import org.geektimes.web.mvc.bean.ModelAndView;
@@ -148,7 +149,8 @@ public class ResultRender {
                 throw new RuntimeException("返回类型不合法");
             }
             try {
-                req.getRequestDispatcher("/templates/" + path).forward(req, resp);
+//                req.getRequestDispatcher("/templates/" + path).forward(req, resp);
+                req.getRequestDispatcher(FuYi.getConfiguration().getResourcePath() + path).forward(req, resp);
             } catch (Exception e) {
                 log.error("转发请求失败", e);
                 // TODO: 异常统一处理，400等...
