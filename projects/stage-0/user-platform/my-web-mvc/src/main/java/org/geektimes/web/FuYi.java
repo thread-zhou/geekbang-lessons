@@ -10,6 +10,8 @@ import org.geektimes.web.ioc.Ioc;
 import org.geektimes.web.server.Server;
 import org.geektimes.web.server.TomcatServer;
 
+import javax.servlet.ServletContext;
+
 /**
  * @ClassName: FuYi
  * @Description: FuYi Starter
@@ -45,6 +47,12 @@ public final class FuYi {
     private static Server server;
 
     /**
+     * ServletContext
+     */
+    @Getter
+    private static ServletContext servletContext;
+
+    /**
      * 启动
      */
     public static void run(Class<?> bootClass) {
@@ -78,6 +86,7 @@ public final class FuYi {
             new Ioc().doIoc();
 
             server = new TomcatServer(configuration);
+            servletContext = server.getServletContext();
             server.startServer();
         } catch (Exception e) {
             log.error("FuYi 启动失败", e);

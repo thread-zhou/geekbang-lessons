@@ -67,6 +67,6 @@ public class UserServiceImpl implements UserService {
     private void init(Connection connection) throws SQLException {
         Statement statement = connection.createStatement();
 //        statement.execute(DBConnectionManager.DROP_USERS_TABLE_DDL_SQL);
-        statement.execute(DBConnectionManager.CREATE_USERS_TABLE_DDL_SQL);
+//        statement.execute(DBConnectionManager.CREATE_USERS_TABLE_DDL_SQL);
     }
 }

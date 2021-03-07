@@ -1,5 +1,7 @@
 package org.geektimes.web.server;
 
+import javax.servlet.ServletContext;
+
 /**
  * @InterfaceName: Server
  * @Description: 服务器 interface
@@ -18,4 +20,6 @@ public interface Server {
      * 停止服务器
      */
     void stopServer() throws Exception;
+
+    ServletContext getServletContext();
 }

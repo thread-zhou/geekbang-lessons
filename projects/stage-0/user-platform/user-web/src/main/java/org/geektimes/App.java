@@ -1,5 +1,6 @@
 package org.geektimes;
 
+import org.geektimes.projects.user.web.listener.DBConnectionInitializerListener;
 import org.geektimes.web.FuYi;
 
 /**
@@ -12,5 +13,6 @@ import org.geektimes.web.FuYi;
 public class App {
     public static void main(String[] args) {
         FuYi.run(App.class);
+//        FuYi.getServletContext().addListener(DBConnectionInitializerListener.class);
     }
 }
