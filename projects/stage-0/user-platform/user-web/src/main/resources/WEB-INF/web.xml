@@ -9,31 +9,31 @@
         <listener-class>org.geektimes.projects.user.web.listener.DBConnectionInitializerListener</listener-class>
     </listener>
     
-<!--    <servlet>-->
-<!--        <servlet-name>default</servlet-name>-->
-<!--        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>-->
-<!--        <init-param>-->
-<!--            <param-name>debug</param-name>-->
-<!--            <param-value>0</param-value>-->
-<!--        </init-param>-->
-<!--        <init-param>-->
-<!--            <param-name>listings</param-name>-->
-<!--            <param-value>false</param-value>-->
-<!--        </init-param>-->
-<!--        <load-on-startup>1</load-on-startup>-->
-<!--    </servlet>-->
+    <servlet>
+        <servlet-name>DefaultServlet</servlet-name>
+        <servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+        <init-param>
+            <param-name>debug</param-name>
+            <param-value>0</param-value>
+        </init-param>
+        <init-param>
+            <param-name>listings</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
 
 
-    <!-- The mapping for the default servlet -->
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>default</servlet-name>-->
-<!--        <url-pattern>*.css</url-pattern>-->
-<!--    </servlet-mapping>-->
+     The mapping for the default servlet
+    <servlet-mapping>
+        <servlet-name>DefaultServlet</servlet-name>
+        <url-pattern>*.css</url-pattern>
+    </servlet-mapping>
 
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>default</servlet-name>-->
-<!--        <url-pattern>*.js</url-pattern>-->
-<!--    </servlet-mapping>-->
+    <servlet-mapping>
+        <servlet-name>default</servlet-name>
+        <url-pattern>*.js</url-pattern>
+    </servlet-mapping>
 
     <servlet>
         <servlet-name>FrontControllerServlet</servlet-name>
@@ -41,6 +41,8 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!-- 如果有一个Servlet的url-partten被配置为了一根正斜杠"/",这个Servlet就变成了缺省Serlvet.
+    其他Servlet都不处理的请求,由缺省Servlet来处理. -->
     <servlet-mapping>
         <servlet-name>FrontControllerServlet</servlet-name>
         <url-pattern>/</url-pattern>

@@ -1,13 +1,8 @@
 package org.geektimes.web.server;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.WebResourceRoot;
-import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.Tomcat;
-import org.apache.catalina.webresources.StandardRoot;
 import org.geektimes.web.Configuration;
 import org.geektimes.web.FuYi;
 import org.geektimes.web.mvc.DispatcherServlet;
@@ -55,11 +50,9 @@ public class TomcatServer implements Server{
             tomcat.setBaseDir(webContentFolder.getAbsolutePath());
             StandardContext ctx = (StandardContext) tomcat.addWebapp(configuration.getContextPath(), webContentFolder.getAbsolutePath());
             ctx.setParentClassLoader(this.getClass().getClassLoader());
-            WebResourceRoot resources = new StandardRoot(ctx);
-            ctx.setResources(resources);
             // 添加jspServlet，defaultServlet和自己实现的dispatcherServlet
             tomcat.addServlet("", "dispatcherServlet", new DispatcherServlet()).setLoadOnStartup(0);
-            ctx.addServletMappingDecoded("/*", "dispatcherServlet");
+            ctx.addServletMapping("/*", "dispatcherServlet");
             this.servletContext = ctx.getServletContext();
 
         } catch (Exception e) {

@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebListener
 public class DBConnectionInitializerListener implements ServletContextListener {
 
     private ServletContext servletContext;
@@ -19,7 +18,7 @@ public class DBConnectionInitializerListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
-//        Connection connection = getConnection();
+        Connection connection = getConnection();
     }
 
     @Override
