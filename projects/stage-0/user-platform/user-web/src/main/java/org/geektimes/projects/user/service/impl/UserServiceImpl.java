@@ -5,6 +5,7 @@ import org.geektimes.projects.user.repository.DatabaseUserRepository;
 import org.geektimes.projects.user.repository.UserRepository;
 import org.geektimes.projects.user.service.UserService;
 import org.geektimes.projects.user.sql.DBConnectionManager;
+import org.geektimes.web.core.ComponentContextFactory;
 
 import java.sql.*;
 import java.util.ServiceLoader;
@@ -21,18 +22,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     public UserServiceImpl(){
-        String databaseURL = "jdbc:derby:/db/user-platform;create=true";
-        Connection connection = null;
-        try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-            connection = DriverManager.getConnection(databaseURL);
-            this.init(connection);
-        } catch (SQLException | ClassNotFoundException throwables) {
-            throwables.printStackTrace();
-        }
-        DBConnectionManager dbConnectionManager = new DBConnectionManager();
-        dbConnectionManager.setConnection(connection);
-        this.userRepository = new DatabaseUserRepository(dbConnectionManager);
+//        this.userRepository = ComponentContextFactory.getComponentContext().getComponent("bean/UserRepository");
     }
 
     public UserServiceImpl(UserRepository userRepository) {

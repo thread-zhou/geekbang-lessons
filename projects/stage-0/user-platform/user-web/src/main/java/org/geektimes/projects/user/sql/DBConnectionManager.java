@@ -1,7 +1,13 @@
 package org.geektimes.projects.user.sql;
 
 import org.geektimes.projects.user.domain.User;
+import org.geektimes.web.core.ComponentContext;
+import org.geektimes.web.core.ComponentContextFactory;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -11,27 +17,38 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+// JNDI Component
 public class DBConnectionManager {
 
-    private Connection connection;
+    private final Logger logger = Logger.getLogger(getClass().getName());
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public Connection getConnection() {
-        return this.connection;
+    public Connection getConnection(){
+        ComponentContext context = ComponentContextFactory.getComponentContext();
+        Connection connection =  null;
+        try {
+            // 依赖查找
+            DataSource dataSource = context.getComponent("jdbc/UserPlatformDB");
+            connection = dataSource.getConnection();
+        }catch (SQLException exception) {
+            logger.log(Level.SEVERE, exception.getMessage(), exception);
+        }
+        if (connection != null) {
+            logger.log(Level.INFO, "成功获取 JNDI 数据库连接");
+        }
+        return connection;
     }
 
     public void releaseConnection() {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e.getCause());
-            }
-        }
+//        if (this.connection != null) {
+//            try {
+//                this.connection.close();
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e.getCause());
+//            }
+//        }
     }
 
     public static final String DROP_USERS_TABLE_DDL_SQL = "DROP TABLE users";

@@ -6,7 +6,11 @@
          metadata-complete="true" version="2.5">
 
     <listener>
-        <listener-class>org.geektimes.projects.user.web.listener.DBConnectionInitializerListener</listener-class>
+        <listener-class>org.geektimes.projects.user.web.listener.ComponentContextInitializerListener</listener-class>
+    </listener>
+    
+    <listener>
+        <listener-class>org.geektimes.projects.user.web.listener.TestInitializerListener</listener-class>
     </listener>
     
     <servlet>
@@ -91,6 +95,7 @@
         <welcome-file>/index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- 无须重复申明了 embed tomcat 7.0.108 -->
 <!--    <resource-ref>-->
 <!--        <description>DB Connection</description>-->
 <!--        <res-ref-name>jdbc/UserPlatformDB</res-ref-name>-->

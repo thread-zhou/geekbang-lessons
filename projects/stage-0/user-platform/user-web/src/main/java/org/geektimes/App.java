@@ -1,6 +1,5 @@
 package org.geektimes;
 
-import org.geektimes.projects.user.web.listener.DBConnectionInitializerListener;
 import org.geektimes.web.FuYi;
 
 /**

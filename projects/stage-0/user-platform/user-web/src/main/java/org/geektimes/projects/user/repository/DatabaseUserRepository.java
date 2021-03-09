@@ -3,6 +3,7 @@ package org.geektimes.projects.user.repository;
 import org.geektimes.function.ThrowableFunction;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.DBConnectionManager;
+import org.geektimes.web.core.ComponentContextFactory;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -33,8 +34,8 @@ public class DatabaseUserRepository implements UserRepository {
 
     private final DBConnectionManager dbConnectionManager;
 
-    public DatabaseUserRepository(DBConnectionManager dbConnectionManager) {
-        this.dbConnectionManager = dbConnectionManager;
+    public DatabaseUserRepository() {
+        this.dbConnectionManager = ComponentContextFactory.getComponentContext().getComponent("bean/DBConnectionManager");
     }
 
     private Connection getConnection() {
