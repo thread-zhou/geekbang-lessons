@@ -39,8 +39,10 @@ public class TomcatServer implements Server{
         try {
             this.tomcat = new Tomcat();
             tomcat.setPort(configuration.getServerPort());
-            // 启动JNDI支持
-            tomcat.enableNaming();
+            if (configuration.isNaming()){
+                // 启动JNDI支持
+                tomcat.enableNaming();
+            }
             File root = getRootFolder(configuration.getBootClass());
             File webContentFolder = new File(root.getAbsolutePath(), configuration.getResourcePath());
             if (!webContentFolder.exists()) {
@@ -51,8 +53,8 @@ public class TomcatServer implements Server{
             StandardContext ctx = (StandardContext) tomcat.addWebapp(configuration.getContextPath(), webContentFolder.getAbsolutePath());
             ctx.setParentClassLoader(this.getClass().getClassLoader());
             // 添加jspServlet，defaultServlet和自己实现的dispatcherServlet
-            tomcat.addServlet("", "dispatcherServlet", new DispatcherServlet()).setLoadOnStartup(0);
-            ctx.addServletMapping("/*", "dispatcherServlet");
+//            tomcat.addServlet("", "dispatcherServlet", new DispatcherServlet()).setLoadOnStartup(0);
+//            ctx.addServletMapping("/*", "dispatcherServlet");
             this.servletContext = ctx.getServletContext();
 
         } catch (Exception e) {

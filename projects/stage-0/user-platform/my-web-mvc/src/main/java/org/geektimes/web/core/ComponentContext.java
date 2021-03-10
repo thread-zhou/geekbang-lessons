@@ -1,6 +1,7 @@
 package org.geektimes.web.core;
 
 import javax.servlet.ServletContext;
+import java.util.List;
 
 /**
  * @InterfaceName: ComponentContext
@@ -11,7 +12,7 @@ import javax.servlet.ServletContext;
  */
 public interface ComponentContext {
 
-    static final String COMPONENT_CONTEXT_NAME = ComponentContext.class.getName();
+    String COMPONENT_CONTEXT_NAME = ComponentContext.class.getName();
 
     /**
      * 初始化
@@ -20,7 +21,16 @@ public interface ComponentContext {
      * @param
      * @return void
      **/
-    void init() throws RuntimeException;
+    void init(ServletContext servletContext) throws RuntimeException;
+
+    /**
+     * 获取 {@link ServletContext}
+     * @author zhoujian
+     * @date 22:08 2021/3/10
+     * @param
+     * @return javax.servlet.ServletContext
+     **/
+    ServletContext getServletContext();
 
     /**
      * 通过组件标识符进行依赖查找
@@ -30,6 +40,24 @@ public interface ComponentContext {
      * @return C
      **/
     <C> C getComponent(String name);
+
+    /**
+     * 获取所有的组件名称
+     * @author zhoujian
+     * @date 23:35 2021/3/10
+     * @param
+     * @return java.util.List<java.lang.String>
+     **/
+    List<String> getComponentNames();
+
+    /**
+     * 通过Class获取组件
+     * @author zhoujian
+     * @date 23:58 2021/3/10
+     * @param
+     * @return java.util.List<C>
+     **/
+    <C> List<C> getComponentsBySuperClass(Class<C> c);
 
     /**
      * 销毁方法

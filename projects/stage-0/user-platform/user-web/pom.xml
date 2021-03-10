@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>org.geekbang.projects</groupId>
-            <artifactId>my-web-mvc</artifactId>
+            <artifactId>user-orm</artifactId>
             <version>${revision}</version>
         </dependency>
 

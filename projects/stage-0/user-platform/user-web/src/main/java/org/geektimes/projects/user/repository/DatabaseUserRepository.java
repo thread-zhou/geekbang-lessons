@@ -5,6 +5,9 @@ import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.web.core.ComponentContextFactory;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -20,6 +23,9 @@ import static org.apache.commons.lang.ClassUtils.wrapperToPrimitive;
 public class DatabaseUserRepository implements UserRepository {
 
     private static Logger logger = Logger.getLogger(DatabaseUserRepository.class.getName());
+
+    @Resource(name = "bean/EntityManager")
+    private EntityManager entityManager;
 
     /**
      * 通用处理方式
@@ -44,28 +50,39 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
-        StringBuffer buffer = new StringBuffer("INSERT INTO users(name,password,email,phoneNumber) VALUES");
-        buffer.append("('").append(user.getName()).append("','")
-                .append(user.getPassword()).append("','")
-                .append(user.getEmail()).append("','")
-                .append(user.getPhoneNumber()).append("')");
-        Statement statement = null;
-        ResultSet resultSet = null;
-        Connection connection = getConnection();
-        boolean flag = false;
+//        StringBuffer buffer = new StringBuffer("INSERT INTO users(name,password,email,phoneNumber) VALUES");
+//        buffer.append("('").append(user.getName()).append("','")
+//                .append(user.getPassword()).append("','")
+//                .append(user.getEmail()).append("','")
+//                .append(user.getPhoneNumber()).append("')");
+//        Statement statement = null;
+//        ResultSet resultSet = null;
+//        Connection connection = getConnection();
+//        boolean flag = false;
+//        try {
+//            statement = connection.createStatement();
+//            flag = statement.execute(buffer.toString());
+//        } catch (SQLException throwables) {
+//            throwables.printStackTrace();
+//        }finally {
+//            try {
+//                connection.close();
+//            } catch (SQLException throwables) {
+//                throwables.printStackTrace();
+//            }
+//        }
+//        return !flag;
+
+        EntityTransaction transaction = entityManager.getTransaction();
         try {
-            statement = connection.createStatement();
-            flag = statement.execute(buffer.toString());
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }finally {
-            try {
-                connection.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
+            transaction.begin();
+            entityManager.persist(user);
+            transaction.commit();
+            return true;
+        }catch (Exception e){
+
         }
-        return !flag;
+        return false;
     }
 
     @Override

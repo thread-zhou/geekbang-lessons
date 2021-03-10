@@ -3,9 +3,9 @@ package org.geektimes.projects.user.web.controller;
 import org.apache.commons.lang.StringUtils;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.service.UserService;
-import org.geektimes.projects.user.service.impl.UserServiceImpl;
 import org.geektimes.web.mvc.controller.PageController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -22,12 +22,8 @@ import javax.ws.rs.Path;
 @Path("/user")
 public class UserController implements PageController {
 
+    @Resource(name = "bean/UserService")
     private UserService userService;
-
-    public UserController (){
-        UserService userService = new UserServiceImpl();
-        this.userService = userService;
-    }
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
@@ -43,7 +39,7 @@ public class UserController implements PageController {
         if (StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(password)){
             User registerUser = new User();
             registerUser.setEmail(email);
-            registerUser.setEmail(email);
+            registerUser.setName("拂衣");
             registerUser.setPassword(password);
             registerUser.setPhoneNumber("15621859466");
             if (userService.register(registerUser)){

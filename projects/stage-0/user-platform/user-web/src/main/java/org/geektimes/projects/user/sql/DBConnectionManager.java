@@ -4,9 +4,11 @@ import org.geektimes.projects.user.domain.User;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.ComponentContextFactory;
 
+import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -24,6 +26,17 @@ import java.util.logging.Logger;
 public class DBConnectionManager {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
+
+    @Resource(name = "jdbc/UserPlatformDB")
+    private DataSource dataSource;
+
+    @Resource(name = "bean/EntityManager")
+    private EntityManager entityManager;
+
+    public EntityManager getEntityManager() {
+        logger.info("当前 EntityManager 实现类：" + entityManager.getClass().getName());
+        return entityManager;
+    }
 
     public Connection getConnection(){
         ComponentContext context = ComponentContextFactory.getComponentContext();

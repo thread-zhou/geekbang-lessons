@@ -54,4 +54,7 @@ public class Configuration {
      */
     @Builder.Default
     private String contextPath = "";
+
+    @Builder.Default
+    private boolean naming = true;
 }
