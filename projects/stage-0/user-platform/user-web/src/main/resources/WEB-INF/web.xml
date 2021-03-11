@@ -6,7 +6,7 @@
          metadata-complete="true" version="2.5">
 
     <listener>
-        <listener-class>org.geektimes.projects.user.web.listener.ComponentContextInitializerListener</listener-class>
+        <listener-class>org.geektimes.web.listener.ComponentContextInitializerListener</listener-class>
     </listener>
     
     <listener>

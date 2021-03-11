@@ -1,6 +1,5 @@
-package org.geektimes.projects.user.web.listener;
+package org.geektimes.web.listener;
 
-import org.geektimes.web.core.AbstractComponentContext;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.context.JndiComponentContext;
 import org.geektimes.web.function.ThrowableAction;
@@ -10,7 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * {@link org.geektimes.web.core.ComponentContext} 初始化器
+ * {@link ComponentContext} 初始化器
  *
  * 类似于 Spring#ContextLoaderListener
  *
