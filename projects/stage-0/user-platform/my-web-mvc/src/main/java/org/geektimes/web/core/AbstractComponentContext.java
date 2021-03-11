@@ -309,15 +309,9 @@ public abstract class AbstractComponentContext implements ComponentContext {
 
     @Override
     public <C> List<C> getComponentsBySuperClass(Class<C> c) {
-        List<C> result = componentsMap.values().stream()
+        return componentsMap.values().stream()
                 .filter(component -> c.isAssignableFrom(component.getClass()))
                 .map((component -> (C) component)).collect(Collectors.toList());
-        for(Object item : componentsMap.values()){
-            if (c.isAssignableFrom(item.getClass())){
-                continue;
-            }
-        }
-        return result;
     }
 
     protected Context getEnvContext(){
