@@ -6,15 +6,13 @@ import org.geektimes.web.core.ComponentContextFactory;
 import javax.servlet.ServletContext;
 
 /**
- * @ClassName: JndiComponentContext
- * @Description: JDNI 组件上下文
+ * @ClassName: DefaultComponentContext
+ * @Description: 用于构造 {@link org.geektimes.web.core.ComponentContext}
  * @author: zhoujian
- * @date: 2021/3/9 20:46
+ * @date: 2021/3/11 13:11
  * @version: 1.0
  */
-final class JndiComponentContext extends AbstractComponentContext {
-
-    public static final String JNDI_COMPONENT_CONTEXT_NAME = JndiComponentContext.class.getName();
+public class DefaultComponentContext extends AbstractComponentContext {
 
     @Override
     protected void additionalInit(ServletContext servletContext) throws RuntimeException {

@@ -1,7 +1,7 @@
 package org.geektimes.web.listener;
 
 import org.geektimes.web.core.ComponentContext;
-import org.geektimes.web.core.context.JndiComponentContext;
+import org.geektimes.web.core.context.DefaultComponentContext;
 import org.geektimes.web.function.ThrowableAction;
 
 import javax.servlet.ServletContext;
@@ -25,7 +25,7 @@ public class ComponentContextInitializerListener implements ServletContextListen
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
-        ComponentContext componentContext = new JndiComponentContext();
+        ComponentContext componentContext = new DefaultComponentContext();
         componentContext.init(servletContext);
     }
 

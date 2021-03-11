@@ -41,6 +41,8 @@ public interface ComponentContext {
      **/
     <C> C getComponent(String name);
 
+    void setComponent(String name, Object c);
+
     /**
      * 获取所有的组件名称
      * @author zhoujian
