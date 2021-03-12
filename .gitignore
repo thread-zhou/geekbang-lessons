@@ -46,3 +46,7 @@ compiler/.gradle/*
 
 # Tomcat
 .extract
+
+work/
+
+tomcat.*/
