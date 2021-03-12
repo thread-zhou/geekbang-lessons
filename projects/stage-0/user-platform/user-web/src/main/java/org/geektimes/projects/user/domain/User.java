@@ -1,9 +1,10 @@
 package org.geektimes.projects.user.domain;
 
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
+
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 import static javax.persistence.GenerationType.AUTO;
@@ -19,21 +20,21 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = AUTO)
-//    @NotNull
+    @Range
     private Long id;
 
     @Column
     private String name;
 
     @Column
-//    @Max(32)
-//    @Min(6)
+    @Length(max = 32, min = 6)
     private String password;
 
     @Column
     private String email;
 
     @Column
+    @Pattern(regexp = "^[1][3,4,5,6,7,8,9][0-9]{9}$", message = "手机号格式错误")
     private String phoneNumber;
 
     public Long getId() {

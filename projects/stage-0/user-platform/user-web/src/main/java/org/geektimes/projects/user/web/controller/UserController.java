@@ -8,9 +8,12 @@ import org.geektimes.web.mvc.controller.PageController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.util.Set;
 
 /**
  * @ClassName: UserController
@@ -24,6 +27,9 @@ public class UserController implements PageController {
 
     @Resource(name = "bean/UserService")
     private UserService userService;
+
+    @Resource(name = "bean/Validator")
+    private Validator validator;
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
@@ -41,10 +47,15 @@ public class UserController implements PageController {
             registerUser.setEmail(email);
             registerUser.setName("拂衣");
             registerUser.setPassword(password);
-            registerUser.setPhoneNumber("15621859466");
-            if (userService.register(registerUser)){
-                // 注册成功
-                return "success.jsp";
+            registerUser.setPhoneNumber("15621859465");
+            Set<ConstraintViolation<User>> validations = validator.validate(registerUser);
+            if (validations.size() == 0){
+                if (userService.register(registerUser)){
+                    // 注册成功
+                    return "success.jsp";
+                }
+            }else {
+                validations.forEach(validation -> System.out.println(validation.getMessage()));
             }
         }
         return "login-form.jsp";
