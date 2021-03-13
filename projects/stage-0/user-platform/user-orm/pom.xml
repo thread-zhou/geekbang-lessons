@@ -27,6 +27,12 @@
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.geekbang.projects</groupId>
+            <artifactId>user-configuration</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- Hibernate ORM Core -->
         <dependency>
             <groupId>org.hibernate</groupId>

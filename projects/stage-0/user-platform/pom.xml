@@ -14,6 +14,7 @@
         <module>my-web-mvc</module>
         <module>user-web</module>
         <module>user-orm</module>
+        <module>user-configuration</module>
     </modules>
 
     <properties>
