@@ -5,7 +5,8 @@
     <parent>
         <artifactId>user-platform</artifactId>
         <groupId>org.geekbang.projects</groupId>
-        <version>v1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -24,6 +25,12 @@
             <groupId>org.geekbang.projects</groupId>
             <artifactId>my-web-mvc</artifactId>
             <version>${revision}</version>
+        </dependency>
+
+        <!-- MicroProfile -->
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
         </dependency>
     </dependencies>
 
