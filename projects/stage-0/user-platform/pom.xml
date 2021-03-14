@@ -15,6 +15,7 @@
         <module>user-web</module>
         <module>user-orm</module>
         <module>user-configuration</module>
+        <module>user-manager</module>
     </modules>
 
     <properties>
@@ -52,6 +53,8 @@
         <hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
         <!-- MicroProfile 版本-->
         <microprofile-config-api.version>2.0</microprofile-config-api.version>
+
+        <jolokia-core.version>1.6.2</jolokia-core.version>
 
     </properties>
 
@@ -202,6 +205,14 @@
                 <artifactId>microprofile-config-api</artifactId>
                 <version>${microprofile-config-api.version}</version>
             </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.jolokia/jolokia-core -->
+            <dependency>
+                <groupId>org.jolokia</groupId>
+                <artifactId>jolokia-core</artifactId>
+                <version>${jolokia-core.version}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>

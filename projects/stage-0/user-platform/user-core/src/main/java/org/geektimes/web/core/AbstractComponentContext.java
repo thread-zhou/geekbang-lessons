@@ -34,7 +34,7 @@ public abstract class AbstractComponentContext implements ComponentContext {
     }
 
     protected Map<String, Object> getComponentsMap(){
-        return COMPONENT_MAP;
+        return Collections.unmodifiableMap(COMPONENT_MAP);
     }
 
     @Override
@@ -70,7 +70,7 @@ public abstract class AbstractComponentContext implements ComponentContext {
      * @return
      */
     public List<String> getComponentNames() {
-        return new ArrayList<>(getComponentsMap().keySet());
+        return new ArrayList<>(COMPONENT_MAP.keySet());
     }
 
     @Override

@@ -8,10 +8,20 @@
     <listener>
         <listener-class>org.geektimes.web.listener.ComponentContextInitializerListener</listener-class>
     </listener>
+
+    <listener>
+        <listener-class>org.geektimes.manager.listener.MBeanRegisterListener</listener-class>
+    </listener>
     
     <listener>
         <listener-class>org.geektimes.projects.user.web.listener.TestInitializerListener</listener-class>
     </listener>
+
+    <servlet>
+        <servlet-name>jolokia-agent</servlet-name>
+        <servlet-class>org.jolokia.http.AgentServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     
     <servlet>
         <servlet-name>DefaultServlet</servlet-name>
@@ -28,7 +38,13 @@
     </servlet>
 
 
-     The mapping for the default servlet
+
+    <servlet-mapping>
+        <servlet-name>jolokia-agent</servlet-name>
+        <url-pattern>/jolokia/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- The mapping for the default servlet -->
     <servlet-mapping>
         <servlet-name>DefaultServlet</servlet-name>
         <url-pattern>*.css</url-pattern>
