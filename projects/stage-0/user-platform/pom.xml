@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>my-web-mvc</module>
+        <module>user-core</module>
         <module>user-web</module>
         <module>user-orm</module>
         <module>user-configuration</module>
