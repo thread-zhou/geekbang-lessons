@@ -21,11 +21,11 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.geekbang.projects</groupId>
-            <artifactId>user-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.geekbang.projects</groupId>-->
+<!--            <artifactId>user-core</artifactId>-->
+<!--            <version>${revision}</version>-->
+<!--        </dependency>-->
 
         <!-- MicroProfile -->
         <dependency>

@@ -1,4 +1,4 @@
-package org.geektimes.web.util;
+package org.geektimes.configuration.util;
 
 /**
  * @ClassName: CastUtil

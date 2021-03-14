@@ -1,5 +1,6 @@
 package org.geektimes.web.listener;
 
+import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.context.DefaultComponentContext;
 import org.geektimes.web.function.ThrowableAction;
@@ -7,6 +8,8 @@ import org.geektimes.web.function.ThrowableAction;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 
 /**
  * {@link ComponentContext} 初始化器
@@ -21,12 +24,23 @@ import javax.servlet.ServletContextListener;
 public class ComponentContextInitializerListener implements ServletContextListener {
 
     private ServletContext servletContext;
+    public final static String CONFIG_PROVIDER_RESOLVER = ConfigProviderResolver.class.getName();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
         ComponentContext componentContext = new DefaultComponentContext();
         componentContext.init(servletContext);
+        servletContext.setAttribute(CONFIG_PROVIDER_RESOLVER, loadSpi());
+    }
+
+    private ConfigProviderResolver loadSpi(){
+        ServiceLoader<ConfigProviderResolver> configProviderResolverServiceLoader = ServiceLoader.load(ConfigProviderResolver.class);
+        Iterator<ConfigProviderResolver> configProviderResolverIterator = configProviderResolverServiceLoader.iterator();
+        if (configProviderResolverIterator.hasNext()){
+            return configProviderResolverIterator.next();
+        }
+        throw new RuntimeException("Not Fount Any ConfigProviderResolver");
     }
 
     @Override
