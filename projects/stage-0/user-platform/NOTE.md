@@ -27,6 +27,11 @@
    - 为什么在 `Idea` 中启动时可以正常的读取到 `user-configuration` 与 `user-core` 模块下的 `org.eclipse.microprofile.config.spi.ConfigSource` 配置，
      但是通过命令行的方式启时（`java -Dapplication.name="User-Web Client" -jar user-web\target\user-web-v1-SNAPSHOT.jar`），仅能读取到 `user-core` 模块下的 `org.eclipse.microprofile.config.spi.ConfigSource` 配置 ?
      
+      > 打包问题，参见:
+      > 
+      > - https://blog.csdn.net/ren78min/article/details/84095336
+      > - http://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html
+     
 
 ## 相关技术
 
