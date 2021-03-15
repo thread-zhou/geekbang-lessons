@@ -25,6 +25,11 @@
 ## 配置集成
 
 > 目前仅进行配置源的简单集成，并未与系统进行细致的集成，通过 `org.geektimes.projects.user.web.listener.TestInitializerListener` 打印检测
+> 
+> 执行命令: java -Dapplication.name="User-Web Client V1.0" -jar user-web\target\user-web-v1-SNAPSHOT.jar
+> 
+> 打印内容: JNDI -> 信息: JNDI Env [property/ApplicationName] is [User-Web-1.0.0]
+> 打印内容: -Dxx -> 信息: System Env [application.name] is [User-Web Client V1.0]
 
 ### 已集成数据源
 
