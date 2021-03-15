@@ -1,6 +1,7 @@
 package org.geektimes.web.listener;
 
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
+import org.geektimes.web.FuYi;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.context.DefaultComponentContext;
 import org.geektimes.web.function.ThrowableAction;

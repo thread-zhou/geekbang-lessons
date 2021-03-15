@@ -1,1 +1,2 @@
+org.geektimes.configuration.spi.source.SystemEnvConfigSource
 org.geektimes.configuration.spi.source.SystemPropertiesConfigSource

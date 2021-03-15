@@ -36,9 +36,13 @@ public class TestInitializerListener implements ServletContextListener {
 
         ConfigProviderResolver configProviderResolver = (ConfigProviderResolver) sce.getServletContext().getAttribute(ComponentContextInitializerListener.CONFIG_PROVIDER_RESOLVER);
         if (configProviderResolver != null) {
-            logger.info("Property Name is [" + configProviderResolver
-                    .getConfig(FuYi.getConfiguration().getBootClass().getClassLoader())
+            logger.info("JNDI Env [property/ApplicationName] is [" + configProviderResolver
+                    .getConfig(getClass().getClassLoader())
             .getValue("property/ApplicationName", String.class) + "]");
+
+            logger.info("System Env [application.name] is [" + configProviderResolver
+                    .getConfig(getClass().getClassLoader())
+                    .getValue("application.name", String.class) + "]");
         }
     }
 

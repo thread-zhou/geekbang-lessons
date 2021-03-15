@@ -21,3 +21,13 @@
 - 列举 `org.geektimes.manager.mbean.context` 中的内容: [http://localhost:9090/jolokia/list/org.geektimes.manager.mbean.context](http://localhost:9090/jolokia/list/org.geektimes.manager.mbean.context)
   
 - 读取 `bean/UserService` 中的内容: [http://localhost:9090/jolokia/read/org.geektimes.manager.mbean.context:type=ComponentContext/bean!/UserService](http://localhost:9090/jolokia/read/org.geektimes.manager.mbean.context:type=ComponentContext/bean!/UserService)
+
+## 配置集成
+
+> 目前仅进行配置源的简单集成，并未与系统进行细致的集成，通过 `org.geektimes.projects.user.web.listener.TestInitializerListener` 打印检测
+
+### 已集成数据源
+
+- `org.geektimes.configuration.spi.source.SystemEnvConfigSource`
+- `org.geektimes.configuration.spi.source.SystemPropertiesConfigSource`
+- `org.geektimes.web.configuration.spi.source.JndiConfigSource`
