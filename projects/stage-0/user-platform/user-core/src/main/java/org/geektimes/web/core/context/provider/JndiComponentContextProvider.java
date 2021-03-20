@@ -203,18 +203,19 @@ public class JndiComponentContextProvider extends AbstractComponentContextProvid
 
     @Override
     protected void processPreDestroy(Object component, Class<?> componentClass) {
-        Stream.of(componentClass.getMethods())
-                .filter(method ->
-                        !Modifier.isStatic(method.getModifiers())
-                                && method.isAnnotationPresent(PreDestroy.class)
-                                && method.getParameterCount() == 0)
-                .forEach(method -> {
-                    try {
-                        method.invoke(component);
-                    }catch (Exception e){
-                        throw new RuntimeException(e);
-                    }
-                });
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Stream.of(componentClass.getMethods())
+                    .filter(method ->
+                            !Modifier.isStatic(method.getModifiers())
+                                    && method.isAnnotationPresent(PreDestroy.class)
+                                    && method.getParameterCount() == 0)
+                    .forEach(method -> {
+                        try {
+                            method.invoke(component);
+                        }catch (Exception e){
+                            throw new RuntimeException(e);
+                        }
+                    });
+        }));
     }
-
 }
