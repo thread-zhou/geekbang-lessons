@@ -4,8 +4,9 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * @ClassName: UserPlatformConfigProviderResolver
@@ -16,13 +17,16 @@ import java.util.ServiceLoader;
  */
 public class UserPlatformConfigProviderResolver extends ConfigProviderResolver {
 
-    @Override
-    public Config getConfig() {
-        return getConfig(null);
+    /**
+     * 缓存 {@link Config}
+     **/
+    private ConcurrentMap<ClassLoader, Config> configsRepository = new ConcurrentHashMap<>();
+
+    private ClassLoader resolveClassLoader(ClassLoader classLoader) {
+        return classLoader == null ? this.getClass().getClassLoader() : classLoader;
     }
 
-    @Override
-    public Config getConfig(ClassLoader classLoader) {
+    private Config loadSpi(ClassLoader classLoader){
         ClassLoader targetClassLoader = classLoader;
         if (targetClassLoader == null) {
             targetClassLoader = Thread.currentThread().getContextClassLoader();
@@ -37,17 +41,41 @@ public class UserPlatformConfigProviderResolver extends ConfigProviderResolver {
     }
 
     @Override
+    public Config getConfig() {
+        return getConfig(Thread.currentThread().getContextClassLoader());
+    }
+
+    @Override
+    public Config getConfig(ClassLoader classLoader) {
+        return configsRepository.computeIfAbsent(classLoader, this::genericConfig);
+    }
+
+    private Config genericConfig(ClassLoader classLoader) {
+        return genericConfigBuilder(resolveClassLoader(classLoader)).build();
+    }
+
+    private ConfigBuilder genericConfigBuilder(ClassLoader classLoader) {
+        return new UserPlatformConfigBuilder(classLoader).addDefaultSources().addDiscoveredSources();
+    }
+
+    @Override
     public ConfigBuilder getBuilder() {
-        return null;
+        return genericConfigBuilder(null);
     }
 
     @Override
     public void registerConfig(Config config, ClassLoader classLoader) {
-
+        configsRepository.put(classLoader, config);
     }
 
     @Override
     public void releaseConfig(Config config) {
-
+        List<ClassLoader> targetKeys = new LinkedList<>();
+        for (Map.Entry<ClassLoader, Config> entry : configsRepository.entrySet()) {
+            if (Objects.equals(config, entry.getValue())) {
+                targetKeys.add(entry.getKey());
+            }
+        }
+        targetKeys.forEach(configsRepository::remove);
     }
 }

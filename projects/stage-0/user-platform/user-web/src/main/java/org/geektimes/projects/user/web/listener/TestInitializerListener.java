@@ -1,5 +1,6 @@
 package org.geektimes.projects.user.web.listener;
 
+import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.web.FuYi;
@@ -34,14 +35,12 @@ public class TestInitializerListener implements ServletContextListener {
         context.getComponentNames().forEach(logger::info);
         logger.info("]");
 
-        ConfigProviderResolver configProviderResolver = (ConfigProviderResolver) sce.getServletContext().getAttribute(ComponentContextInitializerListener.CONFIG_PROVIDER_RESOLVER);
-        if (configProviderResolver != null) {
-            logger.info("JNDI Env [property/ApplicationName] is [" + configProviderResolver
-                    .getConfig(getClass().getClassLoader())
+        Config config = (Config) sce.getServletContext().getAttribute(ComponentContextInitializerListener.CONFIG);
+        if (config != null) {
+            logger.info("JNDI Env [property/ApplicationName] is [" + config
             .getValue("property/ApplicationName", String.class) + "]");
 
-            logger.info("System Env [application.name] is [" + configProviderResolver
-                    .getConfig(getClass().getClassLoader())
+            logger.info("System Env [application.name] is [" + config
                     .getValue("application.name", String.class) + "]");
         }
     }

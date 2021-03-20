@@ -1,4 +1,4 @@
-package org.geektimes.configuration.converter;
+package org.geektimes.configuration.spi.converter;
 
 /**
  * @ClassName: StringToFloatConverter
@@ -7,7 +7,7 @@ package org.geektimes.configuration.converter;
  * @date: 2021/3/14 21:28
  * @version: 1.0
  */
-public class StringToFloatConverter extends AbstractConverter<Float>{
+public class FloatConverter extends AbstractConverter<Float>{
     @Override
     public Float doConvert(String s) throws IllegalArgumentException, NullPointerException {
         return Float.parseFloat(s);

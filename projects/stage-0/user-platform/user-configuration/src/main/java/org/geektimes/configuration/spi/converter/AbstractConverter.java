@@ -1,9 +1,6 @@
-package org.geektimes.configuration.converter;
+package org.geektimes.configuration.spi.converter;
 
 import org.eclipse.microprofile.config.spi.Converter;
-import org.geektimes.configuration.util.CastUtil;
-
-import java.lang.reflect.ParameterizedType;
 
 /**
  * @ClassName: AbstractConverter
@@ -16,11 +13,15 @@ public abstract class AbstractConverter<T> implements Converter<T> {
 
     @Override
     public T convert(String s) throws IllegalArgumentException, NullPointerException {
-        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        if (CastUtil.isPrimitive(tClass)){
-            return doConvert(s);
+        if (s == null) {
+            throw new NullPointerException("The value must not be null!");
         }
-        throw new IllegalArgumentException("暂不支持非原生类型: " + tClass.getName());
+        return doConvert(s);
+//        Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+//        if (CastUtil.isPrimitive(tClass)){
+//            return doConvert(s);
+//        }
+//        throw new IllegalArgumentException("暂不支持非原生类型: " + tClass.getName());
     }
 
     public abstract T doConvert(String s) throws IllegalArgumentException, NullPointerException;

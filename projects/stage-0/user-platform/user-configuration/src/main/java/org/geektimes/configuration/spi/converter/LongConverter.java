@@ -1,4 +1,4 @@
-package org.geektimes.configuration.converter;
+package org.geektimes.configuration.spi.converter;
 
 /**
  * @ClassName: StringToLongConverter
@@ -7,7 +7,7 @@ package org.geektimes.configuration.converter;
  * @date: 2021/3/14 21:29
  * @version: 1.0
  */
-public class StringToLongConverter extends AbstractConverter<Long>{
+public class LongConverter extends AbstractConverter<Long>{
     @Override
     public Long doConvert(String s) throws IllegalArgumentException, NullPointerException {
         return Long.parseLong(s);
