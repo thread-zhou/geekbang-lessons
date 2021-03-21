@@ -60,7 +60,13 @@ public class ConverterFactory implements Iterable<Converter> {
         addDefaultConverter();
     }
 
-
+    /**
+     * 添加内嵌的 {@link Converter}
+     * @author zhoujian
+     * @date 20:45 2021/3/21
+     * @param
+     * @return void
+     **/
     public void addDefaultConverter() {
         if (addedDefaultConverters) {
             return;
