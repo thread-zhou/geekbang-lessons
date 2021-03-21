@@ -28,13 +28,15 @@ public class ComponentContextInitializerListener implements ServletContextListen
 
     private ServletContext servletContext;
     public final static String CONFIG = Config.class.getName();
+    public final static String CONFIG_PROVIDER_RESOLVER = ConfigProviderResolver.class.getName();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
         ComponentContext componentContext = new DefaultComponentContext();
         componentContext.init(servletContext);
-        servletContext.setAttribute(CONFIG, ConfigProvider.getConfig());
+        servletContext.setAttribute(CONFIG, ConfigProvider.getConfig(sce.getServletContext().getClassLoader()));
+        servletContext.setAttribute(CONFIG_PROVIDER_RESOLVER, ConfigProviderResolver.instance());
     }
 
     private ConfigProviderResolver loadSpi(){
