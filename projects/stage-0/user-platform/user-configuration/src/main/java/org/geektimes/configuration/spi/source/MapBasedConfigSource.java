@@ -1,7 +1,6 @@
 package org.geektimes.configuration.spi.source;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +24,16 @@ public abstract class MapBasedConfigSource implements ConfigSource {
 
     private final Map<String, String> source;
 
+    private final Object[] args;
+
     protected MapBasedConfigSource(String name, int ordinal) {
+        this(name, ordinal, null);
+    }
+
+    protected MapBasedConfigSource(String name, int ordinal, Object...args){
         this.name = name;
         this.ordinal = ordinal;
+        this.args = args;
         this.source = getProperties();
     }
 
@@ -39,7 +45,8 @@ public abstract class MapBasedConfigSource implements ConfigSource {
     public final Map<String, String> getProperties() {
         Map<String,String> configData = new HashMap<>();
         try {
-            prepareConfigData(configData);
+            prepareConfig(args);
+            doConfigData(configData);
         } catch (Throwable cause) {
             throw new IllegalStateException("准备配置数据发生错误",cause);
         }
@@ -47,11 +54,21 @@ public abstract class MapBasedConfigSource implements ConfigSource {
     }
 
     /**
-     * 准备配置数据
+     * 真正进行数据配置的方法
+     * @author zhoujian
+     * @date 22:58 2021/3/21
      * @param configData
+     * @return void
+     **/
+    protected abstract void doConfigData(Map<String, String> configData) throws Throwable;
+
+    /**
+     * 前置准备
      * @throws Throwable
      */
-    protected abstract void prepareConfigData(Map configData) throws Throwable;
+    protected void prepareConfig(Object[] args) throws Throwable {
+
+    }
 
     @Override
     public final String getName() {

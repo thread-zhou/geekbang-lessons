@@ -22,36 +22,24 @@ public class UserPlatformConfigProviderResolver extends ConfigProviderResolver {
      **/
     private ConcurrentMap<ClassLoader, Config> configsRepository = new ConcurrentHashMap<>();
 
+    private ConcurrentMap<ClassLoader, ConfigBuilder> configBuilderRepository = new ConcurrentHashMap<>();
+
     private ClassLoader resolveClassLoader(ClassLoader classLoader) {
         return classLoader == null ? this.getClass().getClassLoader() : classLoader;
     }
 
-    private Config loadSpi(ClassLoader classLoader){
-        ClassLoader targetClassLoader = classLoader;
-        if (targetClassLoader == null) {
-            targetClassLoader = Thread.currentThread().getContextClassLoader();
-        }
-        ServiceLoader<Config> configServiceLoader = ServiceLoader.load(Config.class, targetClassLoader);
-        Iterator<Config> iterator = configServiceLoader.iterator();
-        if (iterator.hasNext()) {
-            // 获取 Config SPI 第一个实现
-            return iterator.next();
-        }
-        throw new IllegalStateException("No Config implementation found!");
-    }
-
     @Override
     public Config getConfig() {
-        return getConfig(Thread.currentThread().getContextClassLoader());
+        return getConfig(null);
     }
 
     @Override
     public Config getConfig(ClassLoader classLoader) {
-        return configsRepository.computeIfAbsent(classLoader, this::genericConfig);
+        return configsRepository.computeIfAbsent(resolveClassLoader(classLoader), this::genericConfig);
     }
 
     private Config genericConfig(ClassLoader classLoader) {
-        return genericConfigBuilder(resolveClassLoader(classLoader)).build();
+        return configBuilderRepository.computeIfAbsent(classLoader, this::genericConfigBuilder).build();
     }
 
     private ConfigBuilder genericConfigBuilder(ClassLoader classLoader) {
@@ -60,7 +48,11 @@ public class UserPlatformConfigProviderResolver extends ConfigProviderResolver {
 
     @Override
     public ConfigBuilder getBuilder() {
-        return genericConfigBuilder(null);
+        return getBuilder(null);
+    }
+
+    public ConfigBuilder getBuilder(ClassLoader classLoader){
+        return configBuilderRepository.computeIfAbsent(resolveClassLoader(classLoader), this::genericConfigBuilder);
     }
 
     @Override

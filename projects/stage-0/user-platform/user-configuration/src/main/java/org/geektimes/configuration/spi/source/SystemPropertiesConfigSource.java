@@ -25,7 +25,7 @@ public class SystemPropertiesConfigSource extends MapBasedConfigSource{
      * @return void
      **/
     @Override
-    protected void prepareConfigData(Map configData) {
+    protected void doConfigData(Map configData) {
         configData.putAll(System.getProperties());
     }
 

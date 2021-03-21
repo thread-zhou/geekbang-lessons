@@ -3,7 +3,10 @@ package org.geektimes.web.listener;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
+import org.geektimes.configuration.UserPlatformConfigurationInitializer;
+import org.geektimes.configuration.spi.UserPlatformConfigProviderResolver;
 import org.geektimes.web.FuYi;
+import org.geektimes.web.configuration.spi.source.JndiConfigSource;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.context.DefaultComponentContext;
 import org.geektimes.web.function.ThrowableAction;
@@ -27,16 +30,15 @@ import java.util.ServiceLoader;
 public class ComponentContextInitializerListener implements ServletContextListener {
 
     private ServletContext servletContext;
-    public final static String CONFIG = Config.class.getName();
-    public final static String CONFIG_PROVIDER_RESOLVER = ConfigProviderResolver.class.getName();
+
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
         ComponentContext componentContext = new DefaultComponentContext();
         componentContext.init(servletContext);
-        servletContext.setAttribute(CONFIG, ConfigProvider.getConfig(sce.getServletContext().getClassLoader()));
-        servletContext.setAttribute(CONFIG_PROVIDER_RESOLVER, ConfigProviderResolver.instance());
+        UserPlatformConfigProviderResolver configProviderResolver = (UserPlatformConfigProviderResolver) servletContext.getAttribute(UserPlatformConfigurationInitializer.CONFIG_PROVIDER_RESOLVER);
+        configProviderResolver.getBuilder(servletContext.getClassLoader()).withSources(new JndiConfigSource());
     }
 
     private ConfigProviderResolver loadSpi(){

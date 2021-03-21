@@ -19,7 +19,7 @@ public class DynamicConfigSource extends MapBasedConfigSource{
     }
 
     @Override
-    protected void prepareConfigData(Map configData) throws Throwable {
+    protected void doConfigData(Map configData) throws Throwable {
         configData = Collections.EMPTY_MAP;
         // TODO: 2021/3/20 完成动态配置源的初始化
     }

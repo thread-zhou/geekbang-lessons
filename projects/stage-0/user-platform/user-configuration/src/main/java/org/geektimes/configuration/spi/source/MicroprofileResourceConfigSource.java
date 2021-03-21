@@ -26,7 +26,7 @@ public class MicroprofileResourceConfigSource extends MapBasedConfigSource {
     }
 
     @Override
-    protected void prepareConfigData(Map configData) throws Throwable {
+    protected void doConfigData(Map configData) throws Throwable {
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource(configFileLocation);
         if (resource == null) {
