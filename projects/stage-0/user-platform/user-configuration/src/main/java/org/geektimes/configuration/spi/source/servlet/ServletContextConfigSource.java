@@ -24,9 +24,6 @@ public class ServletContextConfigSource extends MapBasedConfigSource {
     public ServletContextConfigSource(ServletContext servletContext) {
         super("ServletContext Init Parameters", 500, servletContext);
     }
-    private void setServletContext(ServletContext servletContext){
-        this.servletContext = servletContext;
-    }
 
     @Override
     protected void prepareConfig(Object[] args) throws Throwable {
