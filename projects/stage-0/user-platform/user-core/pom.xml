@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>org.geekbang.projects</groupId>
-            <artifactId>user-configuration</artifactId>
+            <artifactId>user-boot</artifactId>
             <version>${revision}</version>
         </dependency>
 

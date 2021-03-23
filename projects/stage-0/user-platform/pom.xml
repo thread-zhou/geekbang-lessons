@@ -16,6 +16,7 @@
         <module>user-orm</module>
         <module>user-configuration</module>
         <module>user-manager</module>
+        <module>user-boot</module>
     </modules>
 
     <properties>

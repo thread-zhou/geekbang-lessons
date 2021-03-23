@@ -1,4 +1,4 @@
-package org.geektimes.configuration.util;
+package org.geektimes.web.util;
 
 import java.util.Collection;
 import java.util.Map;

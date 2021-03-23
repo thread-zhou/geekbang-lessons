@@ -1,4 +1,4 @@
-package org.geektimes.web.configuration.spi.source;
+package org.geektimes.projects.user.spi.configuration.source;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.geektimes.web.core.ComponentContext;

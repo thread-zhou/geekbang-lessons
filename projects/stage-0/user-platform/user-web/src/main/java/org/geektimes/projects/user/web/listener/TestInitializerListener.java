@@ -1,15 +1,11 @@
 package org.geektimes.projects.user.web.listener;
 
 import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-import org.geektimes.configuration.UserPlatformConfigurationInitializer;
+import org.geektimes.configuration.ConfigurationBootstrapInitializer;
 import org.geektimes.projects.user.sql.DBConnectionManager;
-import org.geektimes.web.FuYi;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.ComponentContextFactory;
-import org.geektimes.web.listener.ComponentContextInitializerListener;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.logging.Logger;
@@ -36,7 +32,7 @@ public class TestInitializerListener implements ServletContextListener {
         context.getComponentNames().forEach(logger::info);
         logger.info("]");
 
-        Config config = (Config) sce.getServletContext().getAttribute(UserPlatformConfigurationInitializer.CONFIG);
+        Config config = (Config) sce.getServletContext().getAttribute(ConfigurationBootstrapInitializer.CONFIG);
         if (config != null) {
             logger.info("JNDI Env [property/ApplicationName] is [" + config
             .getValue("property/ApplicationName", String.class) + "]");

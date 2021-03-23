@@ -4,8 +4,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.geektimes.web.aop.Aop;
 import org.geektimes.web.core.BeanContainer;
 import org.geektimes.web.ioc.Ioc;
@@ -13,8 +11,6 @@ import org.geektimes.web.server.Server;
 import org.geektimes.web.server.TomcatServer;
 
 import javax.servlet.ServletContext;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 /**
  * @ClassName: FuYi

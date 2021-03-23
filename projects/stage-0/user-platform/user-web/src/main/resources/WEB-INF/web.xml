@@ -6,10 +6,6 @@
          metadata-complete="true" version="2.5">
 
     <listener>
-        <listener-class>org.geektimes.web.listener.ComponentContextInitializerListener</listener-class>
-    </listener>
-
-    <listener>
         <listener-class>org.geektimes.manager.listener.MBeanRegisterListener</listener-class>
     </listener>
     

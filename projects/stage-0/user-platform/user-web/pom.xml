@@ -18,8 +18,20 @@
         <main.class>org.geektimes.App</main.class>
     </properties>
 
-
     <dependencies>
+
+        <dependency>
+            <groupId>org.geekbang.projects</groupId>
+            <artifactId>user-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.geekbang.projects</groupId>
+            <artifactId>user-configuration</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.geekbang.projects</groupId>
             <artifactId>user-orm</artifactId>
@@ -83,7 +95,12 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${main.class}</mainClass>
                                 </transformer>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+<!--                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>-->
+                                <!-- 进行指定文件, 将影响范围缩小 -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/services/org.geektimes.boot.ApplicationBootstrapInitializer</resource>
+                                </transformer>
                             </transformers>
                         </configuration>
                     </execution>

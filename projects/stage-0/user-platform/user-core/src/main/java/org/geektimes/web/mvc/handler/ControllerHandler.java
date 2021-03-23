@@ -1,8 +1,6 @@
 package org.geektimes.web.mvc.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.geektimes.configuration.util.CastUtil;
-import org.geektimes.configuration.util.ValidateUtil;
 import org.geektimes.web.core.BeanContainer;
 import org.geektimes.web.mvc.ControllerInfo;
 import org.geektimes.web.mvc.PathInfo;
@@ -13,6 +11,8 @@ import org.geektimes.web.mvc.render.JsonRender;
 import org.geektimes.web.mvc.render.NotFoundRender;
 import org.geektimes.web.mvc.render.Render;
 import org.geektimes.web.mvc.render.ViewRender;
+import org.geektimes.web.util.CastUtil;
+import org.geektimes.web.util.ValidateUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
