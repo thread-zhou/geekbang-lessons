@@ -1,11 +1,7 @@
 package org.geektimes.web.listener;
 
-import org.eclipse.microprofile.config.Config;
-import org.eclipse.microprofile.config.ConfigProvider;
-import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.geektimes.configuration.UserPlatformConfigurationInitializer;
 import org.geektimes.configuration.spi.UserPlatformConfigProviderResolver;
-import org.geektimes.web.FuYi;
 import org.geektimes.web.configuration.spi.source.JndiConfigSource;
 import org.geektimes.web.core.ComponentContext;
 import org.geektimes.web.core.context.DefaultComponentContext;
@@ -14,8 +10,6 @@ import org.geektimes.web.function.ThrowableAction;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 /**
  * {@link ComponentContext} 初始化器
@@ -31,23 +25,17 @@ public class ComponentContextInitializerListener implements ServletContextListen
 
     private ServletContext servletContext;
 
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         this.servletContext = sce.getServletContext();
         ComponentContext componentContext = new DefaultComponentContext();
         componentContext.init(servletContext);
         UserPlatformConfigProviderResolver configProviderResolver = (UserPlatformConfigProviderResolver) servletContext.getAttribute(UserPlatformConfigurationInitializer.CONFIG_PROVIDER_RESOLVER);
-        configProviderResolver.getBuilder(servletContext.getClassLoader()).withSources(new JndiConfigSource());
-    }
-
-    private ConfigProviderResolver loadSpi(){
-        ServiceLoader<ConfigProviderResolver> configProviderResolverServiceLoader = ServiceLoader.load(ConfigProviderResolver.class);
-        Iterator<ConfigProviderResolver> configProviderResolverIterator = configProviderResolverServiceLoader.iterator();
-        if (configProviderResolverIterator.hasNext()){
-            return configProviderResolverIterator.next();
+        if(configProviderResolver != null) {
+            configProviderResolver.getBuilder(servletContext.getClassLoader()).withSources(new JndiConfigSource());
+        }else {
+            servletContext.log("Not Found ConfigProviderResolver With ServletContext Attribute: [" + UserPlatformConfigurationInitializer.CONFIG_PROVIDER_RESOLVER + "]");
         }
-        throw new RuntimeException("Not Fount Any ConfigProviderResolver");
     }
 
     @Override
