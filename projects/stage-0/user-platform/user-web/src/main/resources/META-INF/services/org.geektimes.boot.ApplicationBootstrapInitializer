@@ -1,1 +1,2 @@
 org.geektimes.projects.user.web.listener.ComponentContextBootstrapInitializer
+org.geektimes.projects.user.web.ClientBootstrapInitializer
