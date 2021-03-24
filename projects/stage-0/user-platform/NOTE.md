@@ -1,17 +1,6 @@
-# geekbang-lessons
+# 学习笔记
 
-极客时间课程工程
-
-## JNDI
-
-> JNDI：（Java Naming and Directory Interface）号称依赖查找的一个工具
-
-- jndi是延迟初始化（并未马上进行初始化），而是在lookup时进行初始化，这里可以考虑缓存
-
-## ClassLoader
-
-
-### 待整理：
+## 待整理：
 
 1. `JDNI`
     - `JDNI` 是什么
@@ -32,6 +21,33 @@
       > - https://blog.csdn.net/ren78min/article/details/84095336
       > - http://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html
      
+## JNDI
+
+> JNDI：（Java Naming and Directory Interface）号称依赖查找的一个工具
+
+- jndi是延迟初始化（并未马上进行初始化），而是在lookup时进行初始化，这里可以考虑缓存
+
+## ClassLoader
+
+## ThreadLocal
+
+This class provides thread-local variables. These variables differ from their normal counterparts in that each thread that accesses one (via its get or set method) has its own, independently initialized copy of the variable. ThreadLocal instances are typically private static fields in classes that wish to associate state with a thread (e.g., a user ID or Transaction ID).
+
+这个类提供线程局部变量。这些变量与普通变量的不同之处在于，每个访问这些变量的线程(通过其get或set方法)都有自己独立初始化的变量副本。ThreadLocal实例通常是类中的私有静态字段，它们希望将状态与线程(例如，用户ID或事务ID)关联起来。这个类提供线程局部变量。这些变量与普通变量的不同之处在于，每个访问这些变量的线程(通过其get或set方法)都有自己独立初始化的变量副本。
+
+> 1. 内部构建了一个 `ThreadLocalMap` 对象，以当前 `ThreadLocal` 对象为 `Key`，以需要存放的值为 `Value`
+> 2. `ThreadLocalMap` 被当前线程所持有，并非为 `ThreadLocal` 所持有，这便是变量线程间隔离的关键
+> 3. `ThreadLocalMap` 内部为数组结构，可以存储多份数据，数组默认长度为 `16`
+> 4. 内存泄漏问题，主要是由于 `ThreadLocalMap` 中的 `Key` (即 `ThreadLocal`) 是一个弱引用实现，所以在 `GC` 的时候会被回收掉，但是 `ThreadLocalMap`、`Value` 是强引用对象，此时就可能出现 `Key` 为 `null` 但是 `Value` 有值的情况。（假设把弱引用变成强引用，这样无用的对象 `key` 和 `value` 都不为 `null`，反而不利于 `GC`，只能通过 `remove()` 方法手动清理，或者等待线程结束生命周期。也就是说 `ThreadLocalMap` 的生命周期由持有它的线程来决定，线程如果不进入 `terminated` 状态，`ThreadLocalMap` 就不会被 `GC` 回收，这才是 `ThreadLocal` 内存泄漏的真正原因）
+> 5. 线程池与 `ThreadLocal` 内存泄漏，线程的复用可以实现资源的复用，但很容易出现 `ThreadLocal` 资源错乱的情况（线程一直持有 `ThreadLocalMap`），所以合理的手动释放资源既能有效避免内存泄漏，也能实现物理线程与逻辑线程间的封闭隔离
+
+### 参考链接: 
+
+- [ThreadLocal 是什么？有哪些使用场景？](https://blog.csdn.net/meism5/article/details/90413860?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.baidujs&dist_request_id=&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.baidujs)
+- [ThreadLocal是什么？怎么用？为什么用它？有什么缺点？](https://zhuanlan.zhihu.com/p/192997550)
+
+
+
 
 ## 相关技术
 
