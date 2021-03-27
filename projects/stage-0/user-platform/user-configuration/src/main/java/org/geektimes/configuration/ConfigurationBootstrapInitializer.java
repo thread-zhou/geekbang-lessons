@@ -2,8 +2,10 @@ package org.geektimes.configuration;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.geektimes.boot.ApplicationBootstrapInitializer;
+import org.geektimes.configuration.context.ConfigurationContext;
 import org.geektimes.configuration.spi.UserPlatformConfigProviderResolver;
 import org.geektimes.configuration.spi.source.servlet.ServletContextConfigSource;
 
@@ -21,13 +23,18 @@ public class ConfigurationBootstrapInitializer implements ApplicationBootstrapIn
 
     public final static String CONFIG = Config.class.getName();
     public final static String CONFIG_PROVIDER_RESOLVER = ConfigProviderResolver.class.getName();
+    public final static String CONFIG_BUILDER = ConfigBuilder.class.getName();
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         servletContext.setAttribute(CONFIG, ConfigProvider.getConfig(servletContext.getClassLoader()));
         UserPlatformConfigProviderResolver configProviderResolver = (UserPlatformConfigProviderResolver) ConfigProviderResolver.instance();
         servletContext.setAttribute(CONFIG_PROVIDER_RESOLVER, configProviderResolver);
-        configProviderResolver.getBuilder(servletContext.getClassLoader()).withSources(new ServletContextConfigSource(servletContext));
+        ConfigBuilder configBuilder = configProviderResolver.getBuilder(servletContext.getClassLoader());
+        configBuilder.withSources(new ServletContextConfigSource(servletContext));
+        servletContext.setAttribute(CONFIG_BUILDER, configBuilder);
+        // 注册 ConfigurationContext
+        servletContext.addListener(ConfigurationContext.class);
     }
 
     @Override
