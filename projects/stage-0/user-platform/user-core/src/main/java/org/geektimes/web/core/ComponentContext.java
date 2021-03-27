@@ -2,6 +2,7 @@ package org.geektimes.web.core;
 
 import javax.servlet.ServletContext;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @InterfaceName: ComponentContext
@@ -44,6 +45,15 @@ public interface ComponentContext {
     void setComponent(String name, Object c);
 
     /**
+     * 将传入的附加组件上下文刷入全局组件上下文中
+     * @author zhoujian
+     * @date 10:55 2021/3/27
+     * @param additionalComponentContexts
+     * @return void
+     **/
+    void refresh(Map<String, Object> additionalComponentContexts) throws RuntimeException;
+
+    /**
      * 获取所有的组件名称
      * @author zhoujian
      * @date 23:35 2021/3/10
@@ -51,6 +61,15 @@ public interface ComponentContext {
      * @return java.util.List<java.lang.String>
      **/
     List<String> getComponentNames();
+
+    /**
+     * 动态组件注册
+     * @author zhoujian
+     * @date 11:12 2021/3/27
+     * @param component
+     * @return void
+     **/
+    void registerComponent(Object component) throws RuntimeException;
 
     /**
      * 通过Class获取组件

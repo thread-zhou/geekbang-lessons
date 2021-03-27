@@ -3,17 +3,11 @@ package org.geektimes.web.core.context.provider;
 import org.geektimes.web.FuYi;
 import org.geektimes.web.function.ThrowableAction;
 import org.geektimes.web.function.ThrowableFunction;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 import javax.naming.*;
 import javax.servlet.ServletContext;
-import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * @ClassName: JndiComponentContextProvider
@@ -45,7 +39,7 @@ public class JndiComponentContextProvider extends AbstractComponentContextProvid
         // 遍历获取所有的组件名称
         List<String> componentNames = listAllComponentNames();
         // 通过依赖查找，实例化对象（ Tomcat BeanFactory setter 方法的执行，仅支持简单类型）
-        componentNames.forEach(name -> setComponent(name, lookupComponent(name)));
+        componentNames.forEach(name -> appendAdditionalComponent(name, lookupComponent(name)));
     }
 
     private List<String> listAllComponentNames() {
@@ -146,76 +140,15 @@ public class JndiComponentContextProvider extends AbstractComponentContextProvid
         }
     }
 
+    /**
+     * JNDI上下文初始化时 组件查找方法
+     * @author zhoujian
+     * @date 11:34 2021/3/27
+     * @param name
+     * @return C
+     **/
     protected  <C> C lookupComponent(String name) {
         return executeInContext(context -> (C) context.lookup(name));
     }
 
-    @Override
-    protected void injectComponents(Object component, Class<?> componentClass) {
-        Stream.of(componentClass.getDeclaredFields())
-                .filter(field -> {
-                    /**
-                     * 获取访问修饰符：默认情况（什么都不加）: 0  public: 1  private: 2  protected: 4  static: 8  final: 16
-                     *
-                     * 多个访问修饰符则为数字和，如：public static final -> 25
-                     **/
-                    int mods = field.getModifiers();
-                    /**
-                     * 获取非static修饰的，以及使用{@link Resource}修饰的字段
-                     **/
-                    return !Modifier.isStatic(mods) &&
-                            field.isAnnotationPresent(Resource.class);
-                }).forEach(field -> {
-
-            Resource resource = field.getAnnotation(Resource.class);
-            String resourceName = resource.name();
-            // 依赖查找
-            Object injectedObject = lookupComponent(resourceName);
-            field.setAccessible(true);
-            try {
-                // 依赖注入 注入目标对象
-                field.set(component, injectedObject);
-            } catch (IllegalAccessException e) {
-                getLogger().warning("组件[ "+ componentClass.getName() + " ] 字段 --> [ " + field.getName() + " ] 注入失败");
-            }
-        });
-    }
-
-    @Override
-    protected void processPostConstruct(Object component, Class<?> componentClass) {
-        Stream.of(componentClass.getMethods())
-                .filter(method ->
-                        !Modifier.isStatic(method.getModifiers()) &&      // 非 static
-                                /**
-                                 * 没有参数 --> 规定不给参数，因为无法确定参数，但是可以考虑注入一些上下文内容，算是留下钩子
-                                 **/
-                                method.getParameterCount() == 0 &&
-                                method.isAnnotationPresent(PostConstruct.class) // 标注 @PostConstruct
-                ).forEach(method -> {
-            // 执行目标方法
-            try {
-                method.invoke(component);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    @Override
-    protected void processPreDestroy(Object component, Class<?> componentClass) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Stream.of(componentClass.getMethods())
-                    .filter(method ->
-                            !Modifier.isStatic(method.getModifiers())
-                                    && method.isAnnotationPresent(PreDestroy.class)
-                                    && method.getParameterCount() == 0)
-                    .forEach(method -> {
-                        try {
-                            method.invoke(component);
-                        }catch (Exception e){
-                            throw new RuntimeException(e);
-                        }
-                    });
-        }));
-    }
 }
