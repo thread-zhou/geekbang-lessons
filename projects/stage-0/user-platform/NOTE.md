@@ -47,6 +47,71 @@ This class provides thread-local variables. These variables differ from their no
 - [ThreadLocal是什么？怎么用？为什么用它？有什么缺点？](https://zhuanlan.zhihu.com/p/192997550)
 
 
+## JAX-RS 规范
+
+### Application
+
+指代 `Rest Application` ，即 `Rest 应用` ，可以是基于 `Servlet Container` 的，也可以是 `Standalone(独立)` 的
+
+### Demo
+
+```java
+public class RestClientDemo {
+
+    public static void main(String[] args) {
+        Client client = ClientBuilder.newClient();
+        Response response = client
+                .target("http://127.0.0.1:8080/hello/world")      // WebTarget
+                .request() // Invocation.Builder
+                .get();                                     //  Response
+
+        String content = response.readEntity(String.class);
+
+        System.out.println(content);
+
+    }
+}
+```
+
+### 逻辑步骤
+
+1. 构建 URI - 请求资源
+   - UriBuilder
+2. 确定请求方法 - GET、POST
+   - @HttpMethod
+3. 设置请求头和参数 - Headers、Parameters
+   - Header Name 和 Header Value（多值）
+   - Parameter Name 和 Parameter Value（多值）
+   - 数据结构： Map<String,List<String>> - MultivaluedMap
+4. 设置请求主体（可选） - Body 
+   - 二进制流 
+     - 可以转换为 Reader
+5. URI -> 设置到请求
+   - HTTP 客户端发送请求
+        - JDK HttpURLConnection
+        - Apache HttpClient 3.x
+        - Apache HttpComponents
+        - OkHttp
+6. 执行请求（发送到 Server 服务器）
+   - Servlet Stack（Tomcat、Jetty、Undertown）
+   - Spring WebFlux（Netty Web Server）
+   - Vert.x
+7. 处理响应
+    1. 正确响应（200，2XX）
+        - 状态码
+        - 响应头
+            - 数据结构： Map<String,List<String>>
+        - 响应主体
+            - 二进制
+    2. 异常响应 - ExceptionMapper
+        1. 请求有误（4XX）
+        2. 服务器问题（5XX）
+        3. 请求转移（3XX）
+
+#### Client
+
+通过SPI技术进行 javax.ws.rs.client.ClientBuilder 其实现查找，并调用 ClientBuilder#build() 方法进行 Client 创建
+
 
 
 ## 相关技术
