@@ -18,12 +18,47 @@
         <module>user-manager</module>
         <module>user-boot</module>
         <module>user-rest-client</module>
+        <module>user-reactive-messaging</module>
     </modules>
 
     <properties>
         <revision>v1-SNAPSHOT</revision>
         <file.encoding>UTF-8</file.encoding>
         <project.build.sourceEncoding>${file.encoding}</project.build.sourceEncoding>
+
+        <!-- Artifacts 依赖版本 -->
+        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
+        <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
+        <jstl.version>1.2</jstl.version>
+        <tomcat.version>7.0.108</tomcat.version>
+        <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+        <javax.inject.version>1</javax.inject.version>
+        <javax.cdi-api.version>2.0</javax.cdi-api.version>
+
+        <!-- MicroProfile 版本-->
+        <microprofile-config-api.version>2.0</microprofile-config-api.version>
+        <microprofile-rest-client-api.version>2.0</microprofile-rest-client-api.version>
+        <microprofile-reactive-messaging-api.version>1.0</microprofile-reactive-messaging-api.version>
+
+        <!-- 第三方开源依赖版本-->
+        <jolokia-core.version>1.6.2</jolokia-core.version>
+        <jackson.version>2.9.5</jackson.version>
+        <fastjson.version>1.2.47</fastjson.version>
+        <commons-dbcp2.version>2.8.0</commons-dbcp2.version>
+        <hibernate.version>5.4.29.Final</hibernate.version>
+        <hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-io.version>2.4</commons-io.version>
+        <derby.version>10.1.3.1</derby.version>
+        <slf4j-api.version>1.7.25</slf4j-api.version>
+        <lombok.version>1.16.20</lombok.version>
+        <junit.version>4.12</junit.version>
+        <cglib.version>3.2.6</cglib.version>
+        <aspectj.version>1.8.13</aspectj.version>
+        <activemq.version>5.9.1</activemq.version>
+
+        <!-- Testing 版本 -->
+        <junit.version>4.13</junit.version>
 
         <!-- Maven Plugins 版本 -->
         <maven.compiler.version>3.8.1</maven.compiler.version>
@@ -35,32 +70,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-
-        <!-- Artifacts 依赖版本 -->
-        <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
-        <jstl.version>1.2</jstl.version>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-io.version>2.4</commons-io.version>
-        <derby.version>10.1.3.1</derby.version>
-        <slf4j-api.version>1.7.25</slf4j-api.version>
-        <lombok.version>1.16.20</lombok.version>
-        <junit.version>4.12</junit.version>
-        <cglib.version>3.2.6</cglib.version>
-        <aspectj.version>1.8.13</aspectj.version>
-        <tomcat.version>7.0.108</tomcat.version>
-        <jstl.version>1.2</jstl.version>
-        <fastjson.version>1.2.47</fastjson.version>
-        <commons-dbcp2.version>2.8.0</commons-dbcp2.version>
-        <hibernate.version>5.4.29.Final</hibernate.version>
-        <hibernate.validator.version>6.1.7.Final</hibernate.validator.version>
-        <!-- MicroProfile 版本-->
-        <microprofile-config-api.version>2.0</microprofile-config-api.version>
-        <microprofile-rest-client-api.version>2.0</microprofile-rest-client-api.version>
-
-        <jolokia-core.version>1.6.2</jolokia-core.version>
-
-        <jackson.version>2.9.5</jackson.version>
 
     </properties>
 
@@ -89,6 +98,86 @@
                 <version>${jstl.version}</version>
             </dependency>
 
+            <!-- tomcat-embed-jasper这个依赖是引入了一个内置的tomcat，
+            spring-boot默认就是引用这个嵌入式的tomcat包实现直接启动服务的。
+            这个包除了加入了一个嵌入式的tomcat，还引入了java.servlet-api和jsp-api这两个包，
+            如果不想用这种嵌入式的tomcat的话，可以去除tomcat-embed-jasper然后引入这两个包-->
+            <!-- tomcat embed -->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.commons</groupId>-->
+            <!--                <artifactId>commons-dbcp2</artifactId>-->
+            <!--                <version>${commons-dbcp2.version}</version>-->
+            <!--            </dependency>-->
+
+            <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-dbcp -->
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-dbcp</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+
+            <!-- JSTL -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- Java Commons Annotations -->
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${javax.annotation-api.version}</version>
+            </dependency>
+
+            <!-- Java Inject API -->
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
+            </dependency>
+
+            <!-- Java CDI API -->
+            <dependency>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>${javax.cdi-api.version}</version>
+            </dependency>
+
+            <!-- MicroProfile -->
+            <dependency>
+                <groupId>org.eclipse.microprofile.config</groupId>
+                <artifactId>microprofile-config-api</artifactId>
+                <version>${microprofile-config-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.microprofile.rest.client</groupId>
+                <artifactId>microprofile-rest-client-api</artifactId>
+                <version>${microprofile-rest-client-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
+                <artifactId>microprofile-reactive-messaging-api</artifactId>
+                <version>${microprofile-reactive-messaging-api.version}</version>
+            </dependency>
+
+            <!-- Apache Commons-lang -->
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
@@ -114,20 +203,13 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j-api.version}</version>
             </dependency>
+
             <!-- Lombok -->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <!-- junit -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- cglib -->
@@ -144,45 +226,7 @@
                 <version>${aspectj.version}</version>
             </dependency>
 
-            <!-- tomcat-embed-jasper这个依赖是引入了一个内置的tomcat，
-            spring-boot默认就是引用这个嵌入式的tomcat包实现直接启动服务的。
-            这个包除了加入了一个嵌入式的tomcat，还引入了java.servlet-api和jsp-api这两个包，
-            如果不想用这种嵌入式的tomcat的话，可以去除tomcat-embed-jasper然后引入这两个包-->
-            <!-- tomcat embed -->
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
 
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-jasper</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.commons</groupId>-->
-<!--                <artifactId>commons-dbcp2</artifactId>-->
-<!--                <version>${commons-dbcp2.version}</version>-->
-<!--            </dependency>-->
-
-            <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-dbcp -->
-            <dependency>
-                <groupId>org.apache.tomcat</groupId>
-                <artifactId>tomcat-dbcp</artifactId>
-                <version>${tomcat.version}</version>
-            </dependency>
-
-
-            <!-- JSTL -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${jstl.version}</version>
-                <scope>runtime</scope>
-            </dependency>
 
             <!-- FastJson -->
             <dependency>
@@ -212,19 +256,6 @@
                 <version>${hibernate.validator.version}</version>
             </dependency>
 
-            <!-- MicroProfile -->
-            <dependency>
-                <groupId>org.eclipse.microprofile.config</groupId>
-                <artifactId>microprofile-config-api</artifactId>
-                <version>${microprofile-config-api.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.microprofile.rest.client</groupId>
-                <artifactId>microprofile-rest-client-api</artifactId>
-                <version>${microprofile-rest-client-api.version}</version>
-            </dependency>
-
             <!-- https://mvnrepository.com/artifact/org.jolokia/jolokia-core -->
             <dependency>
                 <groupId>org.jolokia</groupId>
@@ -249,6 +280,20 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <!-- Apache ActiveMQ -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-all</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>
