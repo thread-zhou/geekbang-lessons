@@ -50,3 +50,5 @@ compiler/.gradle/*
 work/
 
 tomcat.*/
+
+activemq-data/
