@@ -47,7 +47,7 @@ public void onNext(Object o) {
 
 - [x] 继续完善 my-rest-client POST 方法
 
-简单实现，参照 `org.geektimes.rest.client.HttpGetInvocation` 进行实现，当前未对 `javax.ws.rs.client.Entity` 进行处理
+简单实现，参照 `org.geektimes.rest.client.HttpGetInvocation` 进行实现
 
 1、 `org.geektimes.rest.client.HttpPostInvocation` 实现
 
@@ -63,6 +63,7 @@ import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -70,6 +71,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Future;
 
 /**
@@ -108,22 +110,27 @@ public class HttpPostInvocation implements Invocation {
     @Override
     public Response invoke() {
         HttpURLConnection connection = null;
+        DefaultResponse response = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(HttpMethod.POST);
             setRequestHeaders(connection);
+            setRequestEntity(connection);
             // TODO Set the cookies
             // TODO Handler Entity
             int statusCode = connection.getResponseCode();
-            DefaultResponse response = new DefaultResponse();
+            response = (DefaultResponse) Response.ok(entity.getEntity()).build();
             response.setConnection(connection);
             response.setStatus(statusCode);
-            return response;
+            if (Objects.nonNull(entity.getEncoding())){
+                response.setEncoding(entity.getEncoding());
+            }
 
         } catch (IOException e) {
             // TODO Error handler
+            response = (DefaultResponse) Response.serverError().entity(e.getMessage()).build();
         }
-        return null;
+        return response;
     }
 
     @Override
@@ -156,8 +163,14 @@ public class HttpPostInvocation implements Invocation {
         return null;
     }
 
+    private void setRequestEntity(HttpURLConnection connection){
+        if (Objects.nonNull(entity.getMediaType())){
+            connection.setRequestProperty("content-type", entity.getMediaType().getType() + "/" + entity.getMediaType().getSubtype());
+        }
+    }
+
     /**
-     * 将请求头带回
+     * 设置请求头
      * @author zhoujian
      * @date 22:56 2021/3/30
      * @param connection
@@ -173,16 +186,52 @@ public class HttpPostInvocation implements Invocation {
     }
 }
 
+
 ```
 
 2、测试用例编写
 
+接口编写，对应测试方法 `testPostWithParams`
+
+```java
+package org.geektimes.projects.user.web.controller;
+
+import org.geektimes.projects.user.domain.User;
+import org.geektimes.web.mvc.controller.RestController;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+
+/**
+ * @ClassName: RestUserController
+ * @Description: TODO
+ * @author: zhoujian
+ * @date: 2021/3/31 13:57
+ * @version: 1.0
+ */
+@Path("/rest")
+public class RestDemoController implements RestController {
+
+    @POST
+    @Path("/123/456")
+    public User testPostInvocation(HttpServletRequest request, HttpServletResponse response){
+        User user = new User();
+        user.setName("拂衣");
+        user.setEmail("hhxhxh@163.com");
+        user.setId(1l);
+        return user;
+    }
+}
+
+```
+
 ```java
 package org.geektimes.rest.demo;
 
+import org.geektimes.rest.domain.User;
 import org.geektimes.rest.util.Maps;
 import org.junit.Test;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -199,6 +248,19 @@ import javax.ws.rs.ext.RuntimeDelegate;
  */
 public class RestClientDemo {
 
+    public static void main(String[] args) {
+        Client client = ClientBuilder.newClient();
+        Response response = client
+                .target("http://127.0.0.1:9090/user/sign")      // WebTarget
+                .request() // Invocation.Builder
+                .get();                                     //  Response
+
+        String content = response.readEntity(String.class);
+
+        System.out.println(content);
+
+    }
+
     @Test
     public void testPost(){
         Client client = ClientBuilder.newClient();
@@ -212,17 +274,16 @@ public class RestClientDemo {
 
     @Test
     public void testPostWithParams(){
-        // 请求已成功，但当前MVC暂不支持 ResponseBody 格式返回
         Client client = ClientBuilder.newClient();
         UriBuilder uriBuilder = RuntimeDelegate.getInstance().createUriBuilder()
-               .scheme("http")
-               .host("127.0.0.1")
-               .port(9090)
-               .path("/user/{param1}/{param2}")
-               .resolveTemplates(Maps.of("param1", "123", "param2", "456"));
-        Response response = client.target(uriBuilder).request().post(Entity.json(null));
+                .scheme("http")
+                .host("127.0.0.1")
+                .port(9090)
+                .path("/rest/{param1}/{param2}")
+                .resolveTemplates(Maps.of("param1", "123", "param2", "456"));
+        Response response = client.target(uriBuilder).request().post(Entity.json(User.class));
 
-        String content = response.readEntity(String.class);
+        User content = response.readEntity(User.class);
 
         System.out.println(content);
     }

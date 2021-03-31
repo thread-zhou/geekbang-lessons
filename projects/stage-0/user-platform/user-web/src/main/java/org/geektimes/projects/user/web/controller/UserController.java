@@ -61,15 +61,6 @@ public class UserController implements PageController {
         return "login-form.jsp";
     }
 
-    @POST
-    @Path("/123/456")
-    public String testPostInvocation(){
-        User user = new User();
-        user.setEmail("zzzxxx@163.com");
-        user.setName("拂衣");
-        return new User().toString();
-    }
-
     @GET
     @Path("/sign")
     public String sign(HttpServletRequest request, HttpServletResponse response) throws Throwable{

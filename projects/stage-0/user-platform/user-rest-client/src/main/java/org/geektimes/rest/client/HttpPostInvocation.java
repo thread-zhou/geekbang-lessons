@@ -9,6 +9,7 @@ import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -16,6 +17,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Future;
 
 /**
@@ -54,22 +56,27 @@ public class HttpPostInvocation implements Invocation {
     @Override
     public Response invoke() {
         HttpURLConnection connection = null;
+        DefaultResponse response = null;
         try {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod(HttpMethod.POST);
             setRequestHeaders(connection);
+            setRequestEntity(connection);
             // TODO Set the cookies
             // TODO Handler Entity
             int statusCode = connection.getResponseCode();
-            DefaultResponse response = new DefaultResponse();
+            response = (DefaultResponse) Response.ok(entity.getEntity()).build();
             response.setConnection(connection);
             response.setStatus(statusCode);
-            return response;
+            if (Objects.nonNull(entity.getEncoding())){
+                response.setEncoding(entity.getEncoding());
+            }
 
         } catch (IOException e) {
             // TODO Error handler
+            response = (DefaultResponse) Response.serverError().entity(e.getMessage()).build();
         }
-        return null;
+        return response;
     }
 
     @Override
@@ -102,8 +109,14 @@ public class HttpPostInvocation implements Invocation {
         return null;
     }
 
+    private void setRequestEntity(HttpURLConnection connection){
+        if (Objects.nonNull(entity.getMediaType())){
+            connection.setRequestProperty("content-type", entity.getMediaType().getType() + "/" + entity.getMediaType().getSubtype());
+        }
+    }
+
     /**
-     * 将请求头带回
+     * 设置请求头
      * @author zhoujian
      * @date 22:56 2021/3/30
      * @param connection

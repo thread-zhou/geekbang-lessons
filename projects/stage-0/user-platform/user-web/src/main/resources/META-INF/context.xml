@@ -55,6 +55,10 @@
 			  type="org.geektimes.projects.user.web.controller.UserController"
 			  factory="org.apache.naming.factory.BeanFactory" />
 
+	<Resource name="bean/RestController" auth="Container"
+			  type="org.geektimes.projects.user.web.controller.RestDemoController"
+			  factory="org.apache.naming.factory.BeanFactory" />
+
 	<Resource name="bean/Validator" auth="Container"
 			  type="org.geektimes.projects.user.validator.bean.validation.DelegatingValidator"
 			  factory="org.apache.naming.factory.BeanFactory" />
@@ -67,24 +71,24 @@
 	<!-- JMS/ActiveMQ -->
 
 	<!-- brokerURL: tcp -->
-	    <Resource name="jms/activemq-factory"
-	              auth="Container"
-	              type="org.apache.activemq.ActiveMQConnectionFactory"
-	              description="JMS Connection Factory"
-	              factory="org.apache.activemq.jndi.JNDIReferenceFactory"
-	              brokerURL="tcp://127.0.0.1:61616"
-	              brokerName="LocalActiveMQBroker"
-	              useEmbeddedBroker="false"/>
+<!--	<Resource name="jms/activemq-factory"
+			  auth="Container"
+			  type="org.apache.activemq.ActiveMQConnectionFactory"
+			  description="JMS Connection Factory"
+			  factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+			  brokerURL="tcp://127.0.0.1:61616"
+			  brokerName="LocalActiveMQBroker"
+			  useEmbeddedBroker="false"/>-->
 
 	<!-- brokerURL:in-VM -->
-<!--	<Resource name="jms/activemq-factory"-->
-<!--			  auth="Container"-->
-<!--			  type="org.apache.activemq.ActiveMQConnectionFactory"-->
-<!--			  description="JMS Connection Factory"-->
-<!--			  factory="org.apache.activemq.jndi.JNDIReferenceFactory"-->
-<!--			  brokerURL="vm://localhost"-->
-<!--			  brokerName="LocalActiveMQBroker"-->
-<!--			  useEmbeddedBroker="false"/>-->
+	<Resource name="jms/activemq-factory"
+			  auth="Container"
+			  type="org.apache.activemq.ActiveMQConnectionFactory"
+			  description="JMS Connection Factory"
+			  factory="org.apache.activemq.jndi.JNDIReferenceFactory"
+			  brokerURL="vm://localhost"
+			  brokerName="LocalActiveMQBroker"
+			  useEmbeddedBroker="false"/>
 
 	<Resource name="jms/activemq-topic"
 			  auth="Container"

@@ -168,10 +168,13 @@ public class DefaultResponse extends Response {
                 Object value = IOUtils.toString(inputStream, encoding);
                 entity = (T) value;
             } else {
+                if (!getEntity().equals(entityType)){
+                   throw new ClassCastException(getEntity().getClass() + "can not cast to : " + entityType.getClass());
+                }
                 ObjectMapper objectMapper = new ObjectMapper();
                 entity = objectMapper.readValue(new InputStreamReader(inputStream, encoding), entityType);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassCastException e) {
             throw new RuntimeException(e);
         } finally {
             connection.disconnect();

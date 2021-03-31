@@ -50,7 +50,26 @@ public class DefaultResponseBuilder extends Response.ResponseBuilder{
 
     @Override
     public Response build() {
-        return null;
+        DefaultResponse response = new DefaultResponse();
+        response.setStatus(status);
+        response.setEntity(entity);
+        response.setAnnotations(annotations);
+        response.setAllowedMethods(allowedMethods);
+        response.setCacheControl(cacheControl);
+        if (Objects.nonNull(encoding) && encoding.trim() != ""){
+            response.setEncoding(encoding);
+        }
+        response.setLocale(locale);
+        response.setMediaType(mediaType);
+        response.setVariants(variants);
+        response.setContentLocation(contentLocation);
+        response.setNewCookies(newCookies);
+        response.setExpires(expires);
+        response.setLastModified(lastModified);
+        response.setLocation(location);
+        response.setEntityTag(entityTag);
+        response.setLinks(new HashSet<>(links));
+        return response;
     }
 
     public DefaultResponseBuilder() {

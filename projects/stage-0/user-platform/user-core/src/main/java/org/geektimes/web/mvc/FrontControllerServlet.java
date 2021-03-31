@@ -1,5 +1,6 @@
 package org.geektimes.web.mvc;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.geektimes.web.core.ComponentContextFactory;
 import org.geektimes.web.mvc.controller.Controller;
@@ -21,6 +22,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -169,7 +172,12 @@ public class FrontControllerServlet extends HttpServlet {
                         requestDispatcher.forward(request, response);
                         return;
                     } else if (controller instanceof RestController) {
-                        // TODO
+                        RestController restController = RestController.class.cast(controller);
+                        Object result = handlerMethodInfo.getHandlerMethod().invoke(restController, request, response);
+                        PrintWriter writer = response.getWriter();
+                        String jsonString = JSONObject.toJSONString(result);
+                        writer.write(jsonString);
+                        writer.flush();
                     }
 
                 }
