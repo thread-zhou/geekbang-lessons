@@ -29,6 +29,7 @@ public class SubscriptionAdapter implements Subscription {
     @Override
     public void cancel() {
         this.subscriber.cancel();
+        this.subscriber.onComplete();
     }
 
     public Subscriber getSubscriber() {
