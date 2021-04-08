@@ -100,7 +100,7 @@
 			  auth="Container"
 			  type="javax.jms.MessageProducer"
 			  factory="org.geektimes.projects.user.message.MessageProducerFactory"
-			  connectionFactoryJndiName="jms/activemq-factory"
+			  connectionFactoryJndiName="activemq-factory"
 			  queueName="TEST.FOO" />
 
 </Context>
