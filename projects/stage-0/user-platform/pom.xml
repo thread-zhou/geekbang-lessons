@@ -60,6 +60,7 @@
         <activemq.version>5.9.1</activemq.version>
         <lettuce.version>6.1.0.RELEASE</lettuce.version>
         <jedis.version>3.5.2</jedis.version>
+        <netty.buffer.version>4.1.60.Final</netty.buffer.version>
 
         <!-- Testing 版本 -->
         <junit.version>4.13</junit.version>
@@ -313,6 +314,13 @@
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${netty.buffer.version}</version>
+                <scope>compile</scope>
             </dependency>
 
 

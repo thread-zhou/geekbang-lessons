@@ -20,6 +20,13 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.geekbang.projects</groupId>
+            <artifactId>user-boot</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
