@@ -1,4 +1,5 @@
 package org.geektimes.cache.redis;
+
 import org.geektimes.cache.AbstractCache;
 import org.geektimes.cache.ExpireAbleEntry;
 import redis.clients.jedis.Jedis;
@@ -7,7 +8,7 @@ import javax.cache.CacheException;
 import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import java.io.*;
-import java.util.Iterator;
+import java.util.Set;
 
 public class JedisCache<K extends Serializable, V extends Serializable> extends AbstractCache<K, V> {
 
@@ -37,9 +38,9 @@ public class JedisCache<K extends Serializable, V extends Serializable> extends 
     }
 
     @Override
-    protected void putEntry(ExpireAbleEntry<K, V> newEntry) throws CacheException, ClassCastException {
-        byte[] keyBytes = serialize(newEntry.getKey());
-        byte[] valueBytes = serialize(newEntry.getValue());
+    protected void putEntry(ExpireAbleEntry<K, V> entry) throws CacheException, ClassCastException {
+        byte[] keyBytes = serialize(entry.getKey());
+        byte[] valueBytes = serialize(entry.getValue());
         jedis.set(keyBytes, valueBytes);
     }
 
@@ -52,12 +53,14 @@ public class JedisCache<K extends Serializable, V extends Serializable> extends 
     }
 
     @Override
-    protected void doClear() throws CacheException {
+    protected void clearEntries() throws CacheException {
         // TODO
     }
 
+
     @Override
-    protected Iterator<Entry<K, V>> newIterator() {
+    protected Set<K> keySet() {
+        // TODO
         return null;
     }
 
