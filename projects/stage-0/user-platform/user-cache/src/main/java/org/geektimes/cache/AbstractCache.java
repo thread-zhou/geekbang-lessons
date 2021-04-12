@@ -1,6 +1,5 @@
 package org.geektimes.cache;
 
-import org.geektimes.cache.configuration.ConfigurationUtils;
 import org.geektimes.cache.event.CacheEntryEventPublisher;
 import org.geektimes.cache.integration.CompositeFallbackStorage;
 import org.geektimes.cache.integration.FallbackStorage;
@@ -11,15 +10,24 @@ import javax.cache.CacheManager;
 import javax.cache.configuration.CacheEntryListenerConfiguration;
 import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.Configuration;
+import javax.cache.configuration.Factory;
+import javax.cache.event.CacheEntryEvent;
+import javax.cache.event.EventType;
+import javax.cache.expiry.Duration;
+import javax.cache.expiry.EternalExpiryPolicy;
+import javax.cache.expiry.ExpiryPolicy;
 import javax.cache.integration.CompletionListener;
 import javax.cache.processor.EntryProcessor;
 import javax.cache.processor.EntryProcessorException;
 import javax.cache.processor.EntryProcessorResult;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
+import static org.geektimes.cache.ExpireAbleEntry.requireKeyNotNull;
+import static org.geektimes.cache.ExpireAbleEntry.requireValueNotNull;
+import static org.geektimes.cache.configuration.ConfigurationUtils.completeConfiguration;
 import static org.geektimes.cache.event.GenericCacheEntryEvent.*;
-import static org.geektimes.cache.event.GenericCacheEntryEvent.removedEvent;
 
 /**
  * The abstract non-thread-safe implementation of {@link Cache}
@@ -37,9 +45,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     protected final CompleteConfiguration<K, V> configuration;
 
-    /**
-     * 兜底策略
-     */
+    protected final ExpiryPolicy expiryPolicy;
+
     protected final FallbackStorage fallbackStorage;
 
     private final CacheEntryEventPublisher entryEventPublisher;
@@ -49,26 +56,44 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     protected AbstractCache(CacheManager cacheManager, String cacheName, Configuration<K, V> configuration) {
         this.cacheManager = cacheManager;
         this.cacheName = cacheName;
-        this.configuration = ConfigurationUtils.completeConfiguration(configuration);
+        this.configuration = completeConfiguration(configuration);
+        this.expiryPolicy = getExpiryPolicy(this.configuration);
         this.fallbackStorage = new CompositeFallbackStorage(cacheManager.getClassLoader());
         this.entryEventPublisher = new CacheEntryEventPublisher();
     }
 
     @Override
+    public boolean containsKey(K key) {
+        assertNotClosed();
+        return containsEntry(key);
+    }
+
+    protected abstract boolean containsEntry(K key) throws CacheException, ClassCastException;
+
+    @Override
     public V get(K key) {
         assertNotClosed();
-        assertNotNull(key, "key");
-        V value = null;
+        requireKeyNotNull(key);
+        ExpireAbleEntry<K, V> entry = null;
         try {
-            value = doGet(key);
+            entry = getEntry(key);
+            if (handleExpiryPolicyForAccess(entry)) {
+                return null;
+            }
         } catch (Throwable e) {
             logger.severe(e.getMessage());
         }
-        return loadValueIfReadThrough(key, value);
+        return loadValueIfReadThrough(entry);
     }
 
+    protected abstract ExpireAbleEntry<K, V> getEntry(K key) throws CacheException, ClassCastException;
 
-    private V loadValueIfReadThrough(K key, V value) {
+    private V loadValueIfReadThrough(ExpireAbleEntry<K, V> entry) {
+        if (entry == null) {
+            return null;
+        }
+        K key = entry.getKey();
+        V value = entry.getValue();
         V result = value;
         if (value == null && configuration.isReadThrough()) {
             result = (V) fallbackStorage.load(key);
@@ -79,9 +104,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
         return result;
     }
-
-    //SubClass should be implement
-    protected abstract V doGet(K key) throws CacheException, ClassCastException;
 
     @Override
     public Map<K, V> getAll(Set<? extends K> keys) {
@@ -94,14 +116,15 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     }
 
     @Override
-    public boolean containsKey(K key) {
-        assertNotClosed();
-        assertNotNull(key, "key");
-        return get(key) != null;
+    public V getAndPut(K key, V value) {
+        Entry<K, V> entry = getEntry(key);
+        put(key, value);
+        return entry.getValue();
     }
 
     @Override
-    public void loadAll(Set<? extends K> set, boolean b, CompletionListener completionListener) {
+    public void loadAll(Set<? extends K> keys, boolean replaceExistingValues,
+                        CompletionListener completionListener) {
         assertNotClosed();
         // TODO
         throw new UnsupportedOperationException("This feature will be supported in the future");
@@ -110,44 +133,115 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     @Override
     public void put(K key, V value) {
         assertNotClosed();
-        assertNotNull(key, "key");
-        assertNotNull(value, "value");
+        Entry<K, V> entry = null;
         try {
-            V oldValue = doPut(key, value);
-            if (oldValue == null) {
-                publishCreatedEvent(key, value);
+            if (!containsKey(key)) {
+                // Put the new Cache.Entry
+                entry = createAndPutEntry(key, value);
             } else {
-                publishUpdatedEvent(key, oldValue, value);
+                entry = updateEntry(key, value);
             }
         } finally {
-            writeIfWriteThrough(key, value);
+            writeIfWriteThrough(entry);
         }
     }
 
-    /**
-     * Associates the specified value with the specified key in this Cache
-     * (optional operation).  If the map previously contained a mapping for
-     * the key, the old value is replaced by the specified value.  (A map
-     * <tt>m</tt> is said to contain a mapping for a key <tt>k</tt> if and only
-     * if {@link #containsKey(Object) m.containsKey(k)} would return
-     * <tt>true</tt>.)
-     *
-     * @param key   key with which the specified value is to be associated
-     * @param value value to be associated with the specified key
-     * @return the previous value associated with <tt>key</tt>, or
-     * <tt>null</tt> if there was no mapping for <tt>key</tt>.
-     * (A <tt>null</tt> return can also indicate that the map
-     * previously associated <tt>null</tt> with <tt>key</tt>,
-     * if the implementation supports <tt>null</tt> values.)
-     */
-    protected abstract V doPut(K key, V value) throws CacheException, ClassCastException;
+    private Entry<K, V> createAndPutEntry(K key, V value) {
+        // Create Cache.Entry
+        ExpireAbleEntry<K, V> newEntry = createEntry(key, value);
+        if (handleExpiryPolicyForCreation(newEntry)) {
+            // The new Cache.Entry is already expired and will not be added to the Cache.
+            return null;
+        }
 
-    @Override
-    public V getAndPut(K key, V value) {
-        V oldValue = get(key);
-        put(key, value);
-        return oldValue;
+        putEntry(newEntry);
+        publishCreatedEvent(key, value);
+
+        return newEntry;
     }
+
+    private ExpireAbleEntry<K, V> createEntry(K key, V value) {
+        return ExpireAbleEntry.of(key, value);
+    }
+
+    private Entry<K, V> updateEntry(K key, V value) {
+        // Update Cache.Entry
+        ExpireAbleEntry<K, V> oldEntry = getEntry(key);
+
+        V oldValue = oldEntry.getValue();
+        // Update the value
+        oldEntry.setValue(value);
+        // Rewrite oldEntry
+        putEntry(oldEntry);
+        publishUpdatedEvent(key, oldValue, value);
+
+        if (handleExpiryPolicyForUpdate(oldEntry)) {
+            return null;
+        }
+
+        return oldEntry;
+    }
+
+    private boolean handleExpiryPolicyForCreation(ExpireAbleEntry<K, V> newEntry) {
+        return handleExpiryPolicy(newEntry, getExpiryForCreation(), false);
+    }
+
+    private boolean handleExpiryPolicyForAccess(ExpireAbleEntry<K, V> entry) {
+        return handleExpiryPolicy(entry, getExpiryForAccess(), true);
+    }
+
+    private boolean handleExpiryPolicyForUpdate(ExpireAbleEntry<K, V> oldEntry) {
+        return handleExpiryPolicy(oldEntry, getExpiryForUpdate(), true);
+    }
+
+    /**
+     * Handle {@link ExpiryPolicy}
+     *
+     * @param entry               {@link ExpireAbleEntry}
+     * @param duration            Creation : If a {@link Duration#ZERO} is returned the new Cache.Entry is considered
+     *                            to be already expired and will not be added to the Cache.
+     *                            Access or Update : If a {@link Duration#ZERO} is returned a Cache.Entry will be considered
+     *                            immediately expired.
+     *                            <code>null</code> will result in no change to the previously understood expiry
+     *                            {@link Duration}.
+     * @param removedExpiredEntry the expired {@link Cache.Entry} is removed or not.
+     *                            If <code>true</code>, the {@link Cache.Entry} will be removed and publish an
+     *                            {@link EventType#EXPIRED} of {@link CacheEntryEvent}.
+     * @return <code>true</code> indicates the specified {@link Cache.Entry} should be expired.
+     */
+    private boolean handleExpiryPolicy(ExpireAbleEntry<K, V> entry, Duration duration, boolean removedExpiredEntry) {
+
+        boolean expired = false;
+
+        if (duration != null) {
+            if (duration.isZero() || entry.isExpired()) {
+                expired = true;
+            } else {
+                long timestamp = duration.getAdjustedTime(System.currentTimeMillis());
+                // Update the timestamp
+                entry.setTimestamp(timestamp);
+            }
+        }
+
+        if (removedExpiredEntry && expired) {
+            // Remove Cache.Entry
+            K key = entry.getKey();
+            V value = entry.getValue();
+            removeEntry(key);
+            publishExpiredEvent(key, value);
+        }
+
+        return expired;
+    }
+
+    /**
+     * Put the {@link javax.cache.Cache.Entry} into cache.
+     *
+     * @param newEntry The new instance of {@link Cache.Entry<K,V>} is created by {@link Cache}
+     * @throws CacheException
+     * @throws ClassCastException
+     */
+    protected abstract void putEntry(ExpireAbleEntry<K, V> newEntry) throws CacheException, ClassCastException;
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
@@ -169,13 +263,13 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     @Override
     public boolean remove(K key) {
         assertNotClosed();
-        assertNotNull(key, "key");
+        requireKeyNotNull(key);
         boolean removed = false;
         try {
-            V oldValue = doRemove(key);
-            removed = oldValue != null;
+            ExpireAbleEntry<K, V> oldEntry = removeEntry(key);
+            removed = oldEntry != null;
             if (removed) {
-                publishRemovedEvent(key, oldValue);
+                publishRemovedEvent(key, oldEntry.getValue());
             }
         } finally {
             deleteIfWriteThrough(key);
@@ -183,13 +277,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return removed;
     }
 
-    private void deleteIfWriteThrough(K key) {
-        if (configuration.isWriteThrough()) {
-            fallbackStorage.delete(key);
-        }
-    }
-
-    protected abstract V doRemove(K key) throws CacheException, ClassCastException;
+    protected abstract ExpireAbleEntry<K, V> removeEntry(K key) throws CacheException, ClassCastException;
 
     @Override
     public boolean remove(K key, V oldValue) {
@@ -210,7 +298,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     @Override
     public boolean replace(K key, V oldValue, V newValue) {
-        assertNotNull(key, "oldValue");
+        requireValueNotNull(oldValue);
         if (Objects.equals(get(key), oldValue)) {
             put(key, newValue);
             return true;
@@ -266,61 +354,21 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     @Override
     public <C extends Configuration<K, V>> C getConfiguration(Class<C> clazz) {
         Configuration<K, V> configuration = unwrap(clazz);
-        return (C) ConfigurationUtils.completeConfiguration(configuration);
+        return (C) completeConfiguration(configuration);
     }
 
     @Override
-    public <T> T invoke(K k, EntryProcessor<K, V, T> entryProcessor, Object... objects) throws EntryProcessorException {
+    public <T> T invoke(K key, EntryProcessor<K, V, T> entryProcessor, Object... arguments) throws EntryProcessorException {
         // TODO
         throw new UnsupportedOperationException("This feature will be supported in the future");
     }
 
     @Override
-    public <T> Map<K, EntryProcessorResult<T>> invokeAll(Set<? extends K> set, EntryProcessor<K, V, T> entryProcessor, Object... objects) {
+    public <T> Map<K, EntryProcessorResult<T>> invokeAll(Set<? extends K> keys, EntryProcessor<K, V, T> entryProcessor, Object... arguments) {
         // TODO
         throw new UnsupportedOperationException("This feature will be supported in the future");
     }
 
-    @Override
-    public String getName() {
-        return cacheName;
-    }
-
-    @Override
-    public CacheManager getCacheManager() {
-        return cacheManager;
-    }
-
-    @Override
-    public void close() {
-        if (isClosed()) {
-            return;
-        }
-        doClose();
-        closed = true;
-    }
-
-    /**
-     * Subclass could override this method.
-     */
-    protected void doClose() {
-    }
-
-    @Override
-    public boolean isClosed() {
-        return closed;
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> clazz) {
-        T value = null;
-        try {
-            value = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        return value;
-    }
 
     @Override
     public void registerCacheEntryListener(CacheEntryListenerConfiguration<K, V> cacheEntryListenerConfiguration) {
@@ -340,6 +388,70 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     protected abstract Iterator<Entry<K, V>> newIterator();
 
+    @Override
+    public <T> T unwrap(Class<T> clazz) {
+        T value = null;
+        try {
+            value = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+        return value;
+    }
+
+    @Override
+    public final String getName() {
+        return cacheName;
+    }
+
+    @Override
+    public final CacheManager getCacheManager() {
+        return cacheManager;
+    }
+
+    @Override
+    public final void close() {
+        if (isClosed()) {
+            return;
+        }
+        doClose();
+        closed = true;
+    }
+
+    /**
+     * Subclass could override this method.
+     */
+    protected void doClose() {
+    }
+
+
+    protected Duration getExpiryForCreation() {
+        return getDuration(expiryPolicy::getExpiryForCreation);
+    }
+
+    protected Duration getExpiryForAccess() {
+        return getDuration(expiryPolicy::getExpiryForAccess);
+    }
+
+    protected Duration getExpiryForUpdate() {
+        return getDuration(expiryPolicy::getExpiryForUpdate);
+    }
+
+    private Duration getDuration(Supplier<Duration> durationSupplier) {
+        Duration duration = null;
+        try {
+            duration = durationSupplier.get();
+        } catch (Throwable ignored) {
+            // Default
+            duration = Duration.ETERNAL;
+        }
+        return duration;
+    }
+
+    @Override
+    public final boolean isClosed() {
+        return closed;
+    }
 
     private void publishCreatedEvent(K key, V value) {
         entryEventPublisher.publish(createdEvent(this, key, value));
@@ -347,6 +459,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     private void publishUpdatedEvent(K key, V oldValue, V value) {
         entryEventPublisher.publish(updatedEvent(this, key, oldValue, value));
+    }
+
+    private void deleteIfWriteThrough(K key) {
+        if (configuration.isWriteThrough()) {
+            fallbackStorage.delete(key);
+        }
     }
 
     private void publishExpiredEvent(K key, V oldValue) {
@@ -357,9 +475,9 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         entryEventPublisher.publish(removedEvent(this, key, oldValue));
     }
 
-    private void writeIfWriteThrough(K key, V value) {
-        if (configuration.isWriteThrough()) {
-            fallbackStorage.write(EntryAdapter.of(key, value));
+    private void writeIfWriteThrough(Entry<K, V> entry) {
+        if (entry != null && configuration.isWriteThrough()) {
+            fallbackStorage.write(entry);
         }
     }
 
@@ -369,9 +487,11 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
-    protected static void assertNotNull(Object object, String source) {
-        if (object == null) {
-            throw new NullPointerException(source + " must not be null!");
+    private static ExpiryPolicy getExpiryPolicy(CompleteConfiguration<?, ?> configuration) {
+        Factory<ExpiryPolicy> expiryPolicyFactory = configuration.getExpiryPolicyFactory();
+        if (expiryPolicyFactory == null) {
+            expiryPolicyFactory = EternalExpiryPolicy::new;
         }
+        return expiryPolicyFactory.create();
     }
 }

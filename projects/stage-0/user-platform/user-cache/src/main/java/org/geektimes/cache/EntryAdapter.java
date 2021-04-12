@@ -1,6 +1,5 @@
 package org.geektimes.cache;
 
-
 import javax.cache.Cache;
 import java.util.Map;
 

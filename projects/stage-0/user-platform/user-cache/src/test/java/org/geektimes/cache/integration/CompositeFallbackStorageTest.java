@@ -16,8 +16,7 @@
  */
 package org.geektimes.cache.integration;
 
-import org.geektimes.cache.EntryAdapter;
-import org.geektimes.cache.integration.CompositeFallbackStorage;
+import org.geektimes.cache.ExpireAbleEntry;
 import org.junit.After;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ public class CompositeFallbackStorageTest {
 
     @Test
     public void writeAllAndLoadAll() {
-        instance.writeAll(asList(EntryAdapter.of("a", 1), EntryAdapter.of("b", 2), EntryAdapter.of("c", 3)));
+        instance.writeAll(asList(ExpireAbleEntry.of("a", 1), ExpireAbleEntry.of("b", 2), ExpireAbleEntry.of("c", 3)));
 
         Map map = instance.loadAll(asList("a", "b", "c"));
         assertEquals(1, map.get("a"));

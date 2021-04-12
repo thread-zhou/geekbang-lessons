@@ -1,6 +1,5 @@
 package org.geektimes.cache;
 
-
 import javax.cache.Cache;
 import javax.cache.CacheException;
 import javax.cache.CacheManager;
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 public class InMemoryCache<K, V> extends AbstractCache<K, V> {
 
-    private final Map<K, V> cache;
+    private final Map<K, ExpireAbleEntry<K, V>> cache;
 
     public InMemoryCache(CacheManager cacheManager, String cacheName, Configuration<K, V> configuration) {
         super(cacheManager, cacheName, configuration);
@@ -25,17 +24,23 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
     }
 
     @Override
-    protected V doGet(K key) throws CacheException, ClassCastException {
+    protected boolean containsEntry(K key) throws CacheException, ClassCastException {
+        return cache.containsKey(key);
+    }
+
+    @Override
+    protected ExpireAbleEntry<K, V> getEntry(K key) throws CacheException, ClassCastException {
         return cache.get(key);
     }
 
     @Override
-    protected V doPut(K key, V value) throws CacheException, ClassCastException {
-        return cache.put(key, value);
+    protected void putEntry(ExpireAbleEntry<K, V> newEntry) throws CacheException, ClassCastException {
+        K key = newEntry.getKey();
+        cache.put(key, newEntry);
     }
 
     @Override
-    protected V doRemove(K key) throws CacheException, ClassCastException {
+    protected ExpireAbleEntry<K, V> removeEntry(K key) throws CacheException, ClassCastException {
         return cache.remove(key);
     }
 
@@ -46,7 +51,7 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
 
     @Override
     protected Iterator<Entry<K, V>> newIterator() {
-        return cache.entrySet().stream().map(EntryAdapter::of).iterator();
+        return (Iterator) cache.values().iterator();
     }
 
 }
