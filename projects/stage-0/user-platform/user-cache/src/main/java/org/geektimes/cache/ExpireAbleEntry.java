@@ -7,7 +7,7 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Expirable {@link Cache.Entry}
+ * ExpireAble {@link Cache.Entry}
  *
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @see Map.Entry
