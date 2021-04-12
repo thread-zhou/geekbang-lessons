@@ -19,6 +19,7 @@
         <module>user-boot</module>
         <module>user-rest-client</module>
         <module>user-reactive-messaging</module>
+        <module>user-cache</module>
     </modules>
 
     <properties>
@@ -34,6 +35,7 @@
         <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
         <javax.inject.version>1</javax.inject.version>
         <javax.cdi-api.version>2.0</javax.cdi-api.version>
+        <javax.cache-api.version>1.1.1</javax.cache-api.version>
 
         <!-- MicroProfile 版本-->
         <microprofile-config-api.version>2.0</microprofile-config-api.version>
@@ -56,6 +58,8 @@
         <cglib.version>3.2.6</cglib.version>
         <aspectj.version>1.8.13</aspectj.version>
         <activemq.version>5.9.1</activemq.version>
+        <lettuce.version>6.1.0.RELEASE</lettuce.version>
+        <jedis.version>3.5.2</jedis.version>
 
         <!-- Testing 版本 -->
         <junit.version>4.13</junit.version>
@@ -158,6 +162,14 @@
                 <version>${javax.cdi-api.version}</version>
             </dependency>
 
+            <!-- Java Cache API -->
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${javax.cache-api.version}</version>
+            </dependency>
+
+
             <!-- MicroProfile -->
             <dependency>
                 <groupId>org.eclipse.microprofile.config</groupId>
@@ -176,6 +188,9 @@
                 <artifactId>microprofile-reactive-messaging-api</artifactId>
                 <version>${microprofile-reactive-messaging-api.version}</version>
             </dependency>
+
+
+            <!-- Third-Party Dependencies -->
 
             <!-- Apache Commons-lang -->
             <dependency>
@@ -286,6 +301,22 @@
                 <artifactId>activemq-all</artifactId>
                 <version>${activemq.version}</version>
             </dependency>
+
+            <!-- Redis Java Client - Lettuce -->
+            <dependency>
+                <groupId>io.lettuce</groupId>
+                <artifactId>lettuce-core</artifactId>
+                <version>${lettuce.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+
+
+            <!-- Testing Dependencies -->
 
             <!-- junit -->
             <dependency>
