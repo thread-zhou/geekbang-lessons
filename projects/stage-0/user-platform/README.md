@@ -8,7 +8,7 @@
 
 - [Week-05(程序修复 post实现)](homework/week-05.md)
 
-- [序列化和反序列化API Lettuce实现](homework/week-06.md)
+- [Week-06(序列化和反序列化API Lettuce实现)](homework/week-06.md)
 
 
 ## UserPlatform 说明
