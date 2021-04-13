@@ -1,10 +1,9 @@
-package org.geektimes.cache.redis;
+package org.geektimes.cache.redis.jedis;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
-import org.geektimes.boot.codec.JsonBasedCodec;
-import org.geektimes.boot.codec.ObjectBasedCodec;
+import org.geektimes.boot.codec.Codec;
 import org.geektimes.cache.AbstractCodecAbleCache;
 import org.geektimes.cache.ExpireAbleEntry;
 import redis.clients.jedis.Jedis;
@@ -18,8 +17,8 @@ public class JedisCache<K extends Serializable, V extends Serializable> extends 
     private final Jedis jedis;
 
     public JedisCache(CacheManager cacheManager, String cacheName,
-                      Configuration<K, V> configuration, Jedis jedis) {
-        super(cacheManager, cacheName, configuration, new JsonBasedCodec(), new ObjectBasedCodec());
+                      Configuration<K, V> configuration, Jedis jedis, Codec keyCodec, Codec valueCodec) {
+        super(cacheManager, cacheName, configuration, keyCodec, valueCodec);
         this.jedis = jedis;
     }
 

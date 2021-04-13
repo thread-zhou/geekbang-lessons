@@ -6,7 +6,19 @@ import io.netty.buffer.Unpooled;
 
 import java.io.*;
 
+/**
+ * {@link Codec} Implementation By Object Serializer
+ */
 public class ObjectBasedCodec implements Codec{
+
+    private static final ObjectBasedCodec OBJECT_BASED_CODEC_INSTANCE = new ObjectBasedCodec();
+
+    private ObjectBasedCodec(){}
+
+    public static final Codec getInstance(){
+        return OBJECT_BASED_CODEC_INSTANCE;
+    }
+
     @Override
     public ByteBuf encode(Object value) {
         byte[] bytes = null;

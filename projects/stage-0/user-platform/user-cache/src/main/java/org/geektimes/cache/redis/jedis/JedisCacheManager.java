@@ -1,6 +1,9 @@
-package org.geektimes.cache.redis;
+package org.geektimes.cache.redis.jedis;
 
+import org.geektimes.boot.codec.JsonBasedCodec;
+import org.geektimes.boot.codec.ObjectBasedCodec;
 import org.geektimes.cache.AbstractCacheManager;
+import org.geektimes.cache.redis.jedis.JedisCache;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -25,7 +28,7 @@ public class JedisCacheManager extends AbstractCacheManager {
     @Override
     protected <K, V, C extends Configuration<K, V>> Cache doCreateCache(String cacheName, C configuration) {
         Jedis jedis = jedisPool.getResource();
-        return new JedisCache(this, cacheName, configuration, jedis);
+        return new JedisCache(this, cacheName, configuration, jedis, JsonBasedCodec.getInstance(), ObjectBasedCodec.getInstance());
     }
 
     @Override

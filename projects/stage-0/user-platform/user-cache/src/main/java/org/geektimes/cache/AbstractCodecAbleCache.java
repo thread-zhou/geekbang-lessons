@@ -81,6 +81,6 @@ public abstract class AbstractCodecAbleCache<K, V> extends AbstractCache<K, V>{
     }
 
     private Codec getDefaultCodec(){
-        return new JsonBasedCodec();
+        return JsonBasedCodec.getInstance();
     }
 }
