@@ -16,9 +16,6 @@
  */
 package org.geektimes.cache;
 
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.api.sync.RedisCommands;
 import org.geektimes.cache.event.TestCacheEntryListener;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
@@ -121,11 +118,11 @@ public class CachingTest {
 
         // cache operations
         String key = "redis-lettuce";
-        Integer value1 = 1;
+        Integer value1 = 5;
         cache.put(key, value1);
 
         // update
-        value1 = 2;
+        value1 = 6;
         cache.put(key, value1);
 
         Integer value2 = cache.get(key);

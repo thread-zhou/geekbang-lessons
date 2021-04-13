@@ -27,7 +27,8 @@ public class LettuceCache<K extends Serializable, V extends Serializable> extend
 
     @Override
     protected boolean containsKey(ByteBuf key) {
-        return lettuce.exists(getKeyCodec().decode(key)) > 0;
+        K k = getKeyCodec().decode(key);
+        return lettuce.exists(k) > 0;
     }
 
     @Override

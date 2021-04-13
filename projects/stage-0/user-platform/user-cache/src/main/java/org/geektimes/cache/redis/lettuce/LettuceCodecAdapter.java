@@ -47,7 +47,7 @@ public class LettuceCodecAdapter<K, V> implements RedisCodec<K, V> {
 
     @Override
     public ByteBuffer encodeValue(V v) {
-        ByteBuf byteBuf = this.keyCodec.encode(v);
+        ByteBuf byteBuf = this.valueCodec.encode(v);
         return ByteBuffer.wrap(ByteBufUtil.getBytes(byteBuf));
     }
 

@@ -27,8 +27,9 @@ public class LettuceCacheManager extends AbstractCacheManager {
     @Override
     protected <K, V, C extends Configuration<K, V>> Cache doCreateCache(String cacheName, C configuration) {
         LettuceCodecAdapter<K, V> lettuceCodecAdapter = new LettuceCodecAdapter<>(null, null);
-        this.connection = redisClient.connect(lettuceCodecAdapter);
-        RedisCommands<K, V> syncCommands = connection.sync();
+        StatefulRedisConnection statefulRedisConnection = redisClient.connect(lettuceCodecAdapter);
+        RedisCommands<K, V> syncCommands = statefulRedisConnection.sync();
+        this.connection = statefulRedisConnection;
         return new LettuceCache(this, cacheName, configuration, syncCommands, lettuceCodecAdapter.getKeyCodec(), lettuceCodecAdapter.getValueCodec());
     }
 
