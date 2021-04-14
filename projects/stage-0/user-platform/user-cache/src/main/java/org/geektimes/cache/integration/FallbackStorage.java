@@ -24,6 +24,10 @@ public interface FallbackStorage<K, V> extends CacheLoader<K, V>, CacheWriter<K,
      */
     int getPriority();
 
+    /**
+     * Destroy
+     */
+    void destroy();
 
     class PriorityComparator implements Comparator<FallbackStorage> {
 

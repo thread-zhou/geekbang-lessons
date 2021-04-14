@@ -72,11 +72,11 @@ public abstract class AbstractCodecAbleCache<K, V> extends AbstractCache<K, V>{
     }
 
     private void assertCodec(){
-        if (!keyCodec.support(configuration.getKeyType())){
-            throw new CacheException("KeyCodec [" + keyCodec.getClass().getSimpleName() + "] not support Cache Key Type [" + configuration.getKeyType().getSimpleName() + "]");
+        if (!keyCodec.support(getConfiguration().getKeyType())){
+            throw new CacheException("KeyCodec [" + keyCodec.getClass().getSimpleName() + "] not support Cache Key Type [" + getConfiguration().getKeyType().getSimpleName() + "]");
         }
-        if (!valueCodec.support(configuration.getValueType())){
-            throw new CacheException("ValueCodec [" + valueCodec.getClass().getSimpleName() + "] not support Cache Value Type [" + configuration.getValueType().getSimpleName() + "]");
+        if (!valueCodec.support(getConfiguration().getValueType())){
+            throw new CacheException("ValueCodec [" + valueCodec.getClass().getSimpleName() + "] not support Cache Value Type [" + getConfiguration().getValueType().getSimpleName() + "]");
         }
     }
 
