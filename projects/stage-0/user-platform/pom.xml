@@ -20,6 +20,7 @@
         <module>user-rest-client</module>
         <module>user-reactive-messaging</module>
         <module>user-cache</module>
+        <module>user-oauth2</module>
     </modules>
 
     <properties>
