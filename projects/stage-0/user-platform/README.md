@@ -10,6 +10,8 @@
 
 - [Week-06(序列化和反序列化API Lettuce实现)](homework/week-06.md)
 
+- [Week-07(使用 Servlet 来实现一个整合 Gitee OAuth2认证)](homework/week-07.md)
+
 
 ## UserPlatform 说明
 
